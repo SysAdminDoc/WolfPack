@@ -1,0 +1,51 @@
+{
+  "data": [
+    {
+      "schema": 1619432100208,
+      "appliesTo": [
+        {
+          "included": {
+            "everywhere": true
+          },
+          "default": "yes"
+        }
+      ],
+      "webExtension": {
+        "id": "google@search.mozilla.org"
+      },
+      "id": "a0c0a860-15e0-47a1-8738-d794f8dcfb5a",
+      "last_modified": 1654094046001
+    },
+    {
+      "schema": 1619432100208,
+      "appliesTo": [
+        {
+          "included": {
+            "everywhere": true
+          }
+        }
+      ],
+      "webExtension": {
+        "id": "ddg@search.mozilla.org"
+      },
+      "id": "c0b26c0e-63e6-4235-b2ce-5f16b6a8bf87",
+      "last_modified": 1654094046000
+    },
+    {
+      "schema": 1613245306902,
+      "appliesTo": [
+        {
+          "included": {
+            "everywhere": true
+          }
+        }
+      ],
+      "webExtension": {
+        "id": "wikipedia@search.mozilla.org"
+      },
+      "id": "3f3beb1d-e32e-40a4-b6ed-56741803e1d8",
+      "last_modified": 1654094046000
+    }
+  ],
+  "timestamp": 1654094046001
+}
