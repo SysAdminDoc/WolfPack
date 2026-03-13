@@ -314,7 +314,12 @@ Start-Process -FilePath $lwExe -ArgumentList "--profile `"$profileDir`" --no-rem
         $csc = $cscPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
 
         if ($csc) {
-            & $csc "-nologo" "-target:winexe" "-out:$exeDest" "-reference:System.Windows.Forms.dll" $csFile 2>&1 | Out-Null
+            $icoFile = Join-Path $ScriptDir "assets\librewolf.ico"
+            $icoArg = if (Test-Path $icoFile) { "-win32icon:$icoFile" } else { "" }
+            $cscArgs = @("-nologo", "-target:winexe", "-out:$exeDest", "-reference:System.Windows.Forms.dll")
+            if ($icoArg) { $cscArgs += $icoArg }
+            $cscArgs += $csFile
+            & $csc @cscArgs 2>&1 | Out-Null
             if (Test-Path $exeDest) {
                 Write-Success "  Compiled LibreWolf.exe"
             } else {
