@@ -1,0 +1,95 @@
+{
+    "policies": {
+        "AppUpdateURL": "https://localhost",
+        "DisableAppUpdate": true,
+        "OverrideFirstRunPage": "",
+        "OverridePostUpdatePage": "",
+        "DisableSystemAddonUpdate": true,
+        "DisableProfileImport": false,
+        "DisableFirefoxStudies": true,
+        "DisableTelemetry": true,
+        "DisableFeedbackCommands": true,
+        "DisablePocket": true,
+        "DisableSetDesktopBackground": false,
+        "DisableDeveloperTools": false,
+        "NoDefaultBookmarks": true,
+        "Extensions": {
+            "Install": [
+                "https://addons.mozilla.org/firefox/downloads/latest/sponsorblock/latest.xpi",
+                "https://addons.mozilla.org/firefox/downloads/latest/reddit-enhancement-suite/latest.xpi",
+                "https://addons.mozilla.org/firefox/downloads/latest/adaptive-tab-bar-colour/latest.xpi",
+                "https://github.com/SysAdminDoc/uBlockVanced/releases/latest/download/uBlockVanced-firefox.xpi",
+                "https://github.com/SysAdminDoc/DarkReaderLocal/releases/latest/download/DarkReaderLocal-firefox.xpi",
+                "https://github.com/SysAdminDoc/ScriptVault/releases/latest/download/ScriptVault-firefox.xpi",
+                "https://github.com/SysAdminDoc/StyleKit/releases/latest/download/StyleKit-firefox.xpi"
+            ],
+            "Uninstall": [
+                "bing@search.mozilla.org",
+                "amazondotcom@search.mozilla.org",
+                "ebay@search.mozilla.org",
+                "twitter@search.mozilla.org"
+            ]
+        },
+        "SearchEngines": {
+            "PreventInstalls": false,
+            "Remove": [
+                "Bing",
+                "Amazon.com",
+                "eBay",
+                "Twitter"
+            ],
+            "Default": "Google",
+            "DefaultPrivate": "Google",
+            "Add": [
+                {
+                    "Name": "Google",
+                    "Description": "Google Search",
+                    "Alias": "@g",
+                    "Method": "GET",
+                    "URLTemplate": "https://www.google.com/search?q={searchTerms}",
+                    "SuggestURLTemplate": "https://www.google.com/complete/search?client=firefox&q={searchTerms}",
+                    "IconURL": "https://www.google.com/favicon.ico"
+                },
+                {
+                    "Name": "DuckDuckGo",
+                    "Description": "Privacy-focused search engine",
+                    "Alias": "@ddg",
+                    "Method": "GET",
+                    "URLTemplate": "https://duckduckgo.com/?q={searchTerms}",
+                    "SuggestURLTemplate": "https://duckduckgo.com/ac/?q={searchTerms}&type=list",
+                    "IconURL": "https://duckduckgo.com/favicon.ico"
+                },
+                {
+                    "Name": "DuckDuckGo Lite",
+                    "Description": "Minimal, ad-free version of DuckDuckGo",
+                    "Alias": "@ddgl",
+                    "Method": "POST",
+                    "URLTemplate": "https://start.duckduckgo.com/lite/?q={searchTerms}",
+                    "PostData": "q={searchTerms}",
+                    "IconURL": "https://duckduckgo.com/favicon.ico"
+                },
+                {
+                    "Name": "SearXNG",
+                    "Description": "A privacy-respecting metasearch engine",
+                    "Alias": "@sx",
+                    "Method": "POST",
+                    "URLTemplate": "https://searx.be/?q={searchTerms}",
+                    "PostData": "q={searchTerms}&category_general=on",
+                    "IconURL": "https://searx.be/favicon.ico"
+                },
+                {
+                    "Name": "StartPage",
+                    "Description": "Google results without the tracking",
+                    "Alias": "@sp",
+                    "Method": "GET",
+                    "URLTemplate": "https://www.startpage.com/sp/search?query={searchTerms}&cat=web&pl=opensearch",
+                    "IconURL": "https://www.startpage.com/favicon.ico"
+                }
+            ]
+        },
+        "SupportMenu": {
+            "Title": "LibreWolf Issue Tracker",
+            "URL": "https://codeberg.org/librewolf/issues"
+        }
+    }
+}
