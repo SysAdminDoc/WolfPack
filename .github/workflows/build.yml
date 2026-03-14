@@ -1,4 +1,4 @@
-name: Build LibreWolf Portable
+name: Build WolfPack
 
 on:
   workflow_dispatch:
@@ -56,19 +56,19 @@ jobs:
         run: |
           $ver = "${{ steps.version.outputs.VERSION }}"
           $sourceDir = "build\portable-$ver"
-          $outFile = "output\LibreWolf-$ver-setup.exe"
+          $outFile = "output\WolfPack-$ver-setup.exe"
           makensis /DVERSION="$ver" /DSOURCE_DIR="$sourceDir" /DOUTPUT_FILE="$outFile" installer.nsi
 
       - name: Upload portable zip
         uses: actions/upload-artifact@v4
         with:
-          name: LibreWolf-${{ steps.version.outputs.VERSION }}-portable
+          name: WolfPack-${{ steps.version.outputs.VERSION }}-portable
           path: output/*-portable.zip
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: LibreWolf-${{ steps.version.outputs.VERSION }}-setup
+          name: WolfPack-${{ steps.version.outputs.VERSION }}-setup
           path: output/*-setup.exe
 
       - name: Upload to release

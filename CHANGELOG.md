@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.1.0 (2026-03-13)
+
+Rebranded from "LibreWolf Portable" to **WolfPack**.
+
+### Changes
+- New WolfPack icon and branding across all files
+- Renamed launcher, installer, shortcuts, and registry entries
+- Updated CI/CD workflow artifact names
+- Backward-compatible uninstaller cleans up old naming
+
 ## v1.0.0 (2026-03-13)
 
 Based on LibreWolf 146.0.1-1 (Firefox 146.0.1)
@@ -8,7 +18,7 @@ Based on LibreWolf 146.0.1-1 (Firefox 146.0.1)
 
 - Custom portable build system (`build-portable.ps1`) that downloads, patches, and packages LibreWolf
 - NSIS installer with Start Menu, Desktop shortcuts, and Add/Remove Programs integration
-- Lightweight C# launcher (`LibreWolf.exe`, ~5KB) with embedded LibreWolf icon
+- Lightweight C# launcher (`WolfPack.exe`, ~5KB) with embedded icon
 - GitHub Actions CI/CD workflow for automated builds on release
 - Enterprise `policies.json` for extension auto-install and search engine configuration
 

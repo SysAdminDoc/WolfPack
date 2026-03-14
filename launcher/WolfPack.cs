@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace LibreWolfPortable
+namespace WolfPack
 {
     class Program
     {
@@ -34,7 +34,7 @@ namespace LibreWolfPortable
                 System.Windows.Forms.MessageBox.Show(
                     "Could not find librewolf.exe.\n\nExpected locations:\n" +
                     string.Join("\n", searchPaths),
-                    "LibreWolf Portable",
+                    "WolfPack",
                     System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Error);
                 return;
@@ -69,7 +69,7 @@ namespace LibreWolfPortable
             {
                 System.Windows.Forms.MessageBox.Show(
                     "Failed to launch LibreWolf:\n" + ex.Message,
-                    "LibreWolf Portable",
+                    "WolfPack",
                     System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Error);
             }

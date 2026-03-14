@@ -1,6 +1,6 @@
 // =============================================================================
-// LibreWolf - user.js v0.2.0
-// Custom configuration for LibreWolf portable distribution
+// WolfPack - user.js v0.3.0
+// Custom configuration for WolfPack (LibreWolf-based) distribution
 // =============================================================================
 
 // =============================================================================

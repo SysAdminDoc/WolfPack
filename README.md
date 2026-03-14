@@ -1,24 +1,24 @@
 <p align="center">
-  <img src="assets/librewolf-logo.png" width="128" alt="LibreWolf">
+  <img src="assets/wolfpack-logo.png" width="128" alt="WolfPack">
 </p>
 
-<h1 align="center">LibreWolf Portable</h1>
+<h1 align="center">WolfPack</h1>
 
 <p align="center">
   A custom LibreWolf distribution for Windows with optimized defaults, pre-installed extensions, and portable packaging.
 </p>
 
 <p align="center">
-  <a href="https://github.com/SysAdminDoc/LibreWolf/releases/latest"><img src="https://img.shields.io/github/v/release/SysAdminDoc/LibreWolf?style=flat-square&color=blue" alt="Latest Release"></a>
-  <a href="https://github.com/SysAdminDoc/LibreWolf/releases/latest"><img src="https://img.shields.io/github/downloads/SysAdminDoc/LibreWolf/total?style=flat-square&color=green" alt="Downloads"></a>
-  <a href="https://github.com/SysAdminDoc/LibreWolf/actions"><img src="https://img.shields.io/github/actions/workflow/status/SysAdminDoc/LibreWolf/build.yml?style=flat-square" alt="Build"></a>
+  <a href="https://github.com/SysAdminDoc/WolfPack/releases/latest"><img src="https://img.shields.io/github/v/release/SysAdminDoc/WolfPack?style=flat-square&color=blue" alt="Latest Release"></a>
+  <a href="https://github.com/SysAdminDoc/WolfPack/releases/latest"><img src="https://img.shields.io/github/downloads/SysAdminDoc/WolfPack/total?style=flat-square&color=green" alt="Downloads"></a>
+  <a href="https://github.com/SysAdminDoc/WolfPack/actions"><img src="https://img.shields.io/github/actions/workflow/status/SysAdminDoc/WolfPack/build.yml?style=flat-square" alt="Build"></a>
 </p>
 
 ---
 
 ## What Is This?
 
-This project takes the official [LibreWolf](https://librewolf.net/) portable build and repackages it with:
+WolfPack takes the official [LibreWolf](https://librewolf.net/) portable build and repackages it with:
 
 - **Google as default search engine** (with suggestions enabled)
 - **DRM enabled** out of the box (Netflix, Disney+, Spotify work immediately)
@@ -36,10 +36,10 @@ All telemetry, Mozilla promotions, Pocket, Firefox Sync, safe browsing, and othe
 
 | File | Description |
 |------|-------------|
-| `LibreWolf-<version>-setup.exe` | Windows installer (Start Menu + Desktop shortcuts, Add/Remove Programs) |
-| `LibreWolf-<version>-portable.zip` | Portable zip (extract anywhere and run `LibreWolf.exe`) |
+| `WolfPack-<version>-setup.exe` | Windows installer (Start Menu + Desktop shortcuts, Add/Remove Programs) |
+| `WolfPack-<version>-portable.zip` | Portable zip (extract anywhere and run `WolfPack.exe`) |
 
-Download from the [Releases](https://github.com/SysAdminDoc/LibreWolf/releases) page.
+Download from the [Releases](https://github.com/SysAdminDoc/WolfPack/releases) page.
 
 ## Pre-Installed Extensions
 
@@ -100,15 +100,19 @@ Google is the default. Also available: DuckDuckGo, DuckDuckGo Lite, SearXNG, Sta
 ```
 
 ### Output
-- `output/LibreWolf-<version>-portable.zip`
-- `output/LibreWolf-<version>-setup.exe`
+- `output/WolfPack-<version>-portable.zip`
+- `output/WolfPack-<version>-setup.exe`
 
 ## Project Structure
 
 ```
-LibreWolf/
+WolfPack/
   assets/              # Icon and logo files
   launcher/            # C# portable launcher source
+  patches/             # Upstream LibreWolf patches
+  themes/              # Upstream LibreWolf branding/themes
+  scripts/             # Upstream LibreWolf build scripts
+  l10n/                # Localization files
   .github/workflows/   # CI/CD build pipeline
   build-portable.ps1   # Main build script
   installer.nsi        # NSIS installer script
@@ -122,7 +126,7 @@ LibreWolf/
 2. Patches `librewolf.cfg` to fix common complaints (DRM, cache, RFP, etc.)
 3. Injects custom `policies.json` for extension auto-install and Google default
 4. Injects `user.js` with optimized preferences into the portable profile
-5. Compiles a lightweight C# launcher (`LibreWolf.exe`, ~5KB)
+5. Compiles a lightweight C# launcher (`WolfPack.exe`, ~5KB)
 6. Packages as portable zip and NSIS installer
 
 ## License

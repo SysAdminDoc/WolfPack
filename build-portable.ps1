@@ -1,5 +1,5 @@
 # =============================================================================
-# LibreWolf Portable - Build Script v1.1.0
+# WolfPack - Build Script v1.2.0
 # Downloads latest LibreWolf, injects custom config, packages portable + installer
 # =============================================================================
 
@@ -12,7 +12,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$ProjectName = "LibreWolf"
+$ProjectName = "WolfPack"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $BuildDir = Join-Path $ScriptDir "build"
 $OutputDir = Join-Path $ScriptDir "output"
@@ -263,7 +263,7 @@ if not exist "%PROFILE_DIR%" mkdir "%PROFILE_DIR%"
 
 start "" "%LW_EXE%" --profile "%PROFILE_DIR%" --no-remote %*
 '@
-    Set-Content -Path (Join-Path $lwRoot "LibreWolf.bat") -Value $launcherBat -Encoding ASCII
+    Set-Content -Path (Join-Path $lwRoot "WolfPack.bat") -Value $launcherBat -Encoding ASCII
 
     # Create a VBS wrapper to launch without console window
     $launcherVbs = @'
@@ -286,7 +286,7 @@ End If
 
 WshShell.Run """" & lwExe & """ --profile """ & profileDir & """ --no-remote", 0, False
 '@
-    Set-Content -Path (Join-Path $lwRoot "LibreWolf.vbs") -Value $launcherVbs -Encoding ASCII
+    Set-Content -Path (Join-Path $lwRoot "WolfPack.vbs") -Value $launcherVbs -Encoding ASCII
 
     # Create a PowerShell launcher
     $launcherPs1 = @'
@@ -301,12 +301,12 @@ $profileDir = Join-Path $scriptDir "Profiles\Default"
 if (-not (Test-Path $profileDir)) { New-Item -ItemType Directory -Path $profileDir -Force | Out-Null }
 Start-Process -FilePath $lwExe -ArgumentList "--profile `"$profileDir`" --no-remote" -WindowStyle Hidden
 '@
-    Set-Content -Path (Join-Path $lwRoot "LibreWolf.ps1") -Value $launcherPs1 -Encoding UTF8
+    Set-Content -Path (Join-Path $lwRoot "WolfPack.ps1") -Value $launcherPs1 -Encoding UTF8
 
     # Compile C# launcher exe (no console window)
-    $csFile = Join-Path $ScriptDir "launcher\LibreWolf.cs"
+    $csFile = Join-Path $ScriptDir "launcher\WolfPack.cs"
     if (Test-Path $csFile) {
-        $exeDest = Join-Path $lwRoot "LibreWolf.exe"
+        $exeDest = Join-Path $lwRoot "WolfPack.exe"
         $cscPaths = @(
             (Join-Path $env:SystemRoot "Microsoft.NET\Framework64\v4.0.30319\csc.exe"),
             (Join-Path $env:SystemRoot "Microsoft.NET\Framework\v4.0.30319\csc.exe")
@@ -314,14 +314,14 @@ Start-Process -FilePath $lwExe -ArgumentList "--profile `"$profileDir`" --no-rem
         $csc = $cscPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
 
         if ($csc) {
-            $icoFile = Join-Path $ScriptDir "assets\librewolf.ico"
+            $icoFile = Join-Path $ScriptDir "assets\wolfpack.ico"
             $icoArg = if (Test-Path $icoFile) { "-win32icon:$icoFile" } else { "" }
             $cscArgs = @("-nologo", "-target:winexe", "-out:$exeDest", "-reference:System.Windows.Forms.dll")
             if ($icoArg) { $cscArgs += $icoArg }
             $cscArgs += $csFile
             & $csc @cscArgs 2>&1 | Out-Null
             if (Test-Path $exeDest) {
-                Write-Success "  Compiled LibreWolf.exe"
+                Write-Success "  Compiled WolfPack.exe"
             } else {
                 Write-Warn "  C# compilation failed, using script launchers instead"
             }
@@ -331,7 +331,7 @@ Start-Process -FilePath $lwExe -ArgumentList "--profile `"$profileDir`" --no-rem
     }
 
     # Clean up old-named launchers if they exist from previous builds
-    foreach ($old in @("LibreWolf-Dark.bat", "LibreWolf-Dark.vbs", "LibreWolf-Dark.ps1", "LibreWolf-Dark.exe")) {
+    foreach ($old in @("LibreWolf-Dark.bat", "LibreWolf-Dark.vbs", "LibreWolf-Dark.ps1", "LibreWolf-Dark.exe", "LibreWolf.bat", "LibreWolf.vbs", "LibreWolf.ps1", "LibreWolf.exe")) {
         $oldPath = Join-Path $lwRoot $old
         if (Test-Path $oldPath) { Remove-Item $oldPath -Force }
     }
@@ -399,7 +399,7 @@ function Build-NsisInstaller($lwRoot, $version) {
 
 Write-Host ""
 Write-Host "=============================================" -ForegroundColor Magenta
-Write-Host "  LibreWolf Portable - Build System" -ForegroundColor Magenta
+Write-Host "  WolfPack - Build System" -ForegroundColor Magenta
 Write-Host "=============================================" -ForegroundColor Magenta
 Write-Host ""
 
