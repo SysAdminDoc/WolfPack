@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WolfPack Dashboard</title>
+<style>
+  :root {
+    --crust: #11111b; --mantle: #181825; --base: #1e1e2e;
+    --surface0: #313244; --surface1: #45475a; --surface2: #585b70;
+    --overlay0: #6c7086; --overlay1: #7f849c; --overlay2: #9399b2;
+    --subtext0: #a6adc8; --subtext1: #bac2de; --text: #cdd6f4;
+    --blue: #89b4fa; --lavender: #b4befe; --sapphire: #74c7ec;
+    --green: #a6e3a1; --yellow: #f9e2af; --peach: #fab387;
+    --red: #f38ba8; --mauve: #cba6f7; --pink: #f5c2e7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--base); color: var(--text); font-family: system-ui, -apple-system, sans-serif;
+    min-height: 100vh; padding: 32px; line-height: 1.6;
+  }
+  .header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; color: var(--blue); }
+  .header .version { color: var(--overlay1); font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+  .card {
+    background: var(--surface0); border-radius: 12px; padding: 24px;
+    border: 1px solid var(--surface1); transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--blue); }
+  .card h2 { font-size: 16px; color: var(--blue); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card h2 .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.green { background: var(--green); }
+  .dot.yellow { background: var(--yellow); }
+  .dot.red { background: var(--red); }
+  .stat { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--surface1); }
+  .stat:last-child { border-bottom: none; }
+  .stat .label { color: var(--subtext0); font-size: 13px; }
+  .stat .value { color: var(--text); font-size: 13px; font-weight: 500; }
+  .stat .value.accent { color: var(--blue); }
+  .stat .value.good { color: var(--green); }
+  .stat .value.warn { color: var(--yellow); }
+  .stat .value.bad { color: var(--red); }
+  .section-title { font-size: 20px; color: var(--text); margin: 32px 0 16px; font-weight: 600; }
+  .shortcuts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .shortcut {
+    background: var(--surface1); color: var(--text); border: none; padding: 8px 16px;
+    border-radius: 8px; font-size: 13px; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s;
+  }
+  .shortcut:hover { background: var(--surface2); }
+  .shortcut .key { color: var(--blue); font-family: monospace; font-size: 12px; }
+  .footer { margin-top: 40px; text-align: center; color: var(--overlay0); font-size: 12px; }
+  .footer a { color: var(--blue); text-decoration: none; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 6px 0; font-size: 13px; }
+  td:first-child { color: var(--subtext0); width: 40%; }
+  td:last-child { color: var(--text); }
+  code { background: var(--mantle); padding: 2px 6px; border-radius: 4px; font-size: 12px; color: var(--mauve); }
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>WolfPack</h1>
+    <span class="version">Dashboard</span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2><span class="dot green"></span> Browser Info</h2>
+      <div class="stat"><span class="label">User Agent</span><span class="value" id="ua">-</span></div>
+      <div class="stat"><span class="label">Platform</span><span class="value" id="platform">-</span></div>
+      <div class="stat"><span class="label">Language</span><span class="value" id="lang">-</span></div>
+      <div class="stat"><span class="label">Cookies Enabled</span><span class="value" id="cookies">-</span></div>
+      <div class="stat"><span class="label">Do Not Track</span><span class="value" id="dnt">-</span></div>
+      <div class="stat"><span class="label">Hardware Concurrency</span><span class="value" id="cores">-</span></div>
+      <div class="stat"><span class="label">Device Memory</span><span class="value" id="memory">-</span></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot green"></span> Network</h2>
+      <div class="stat"><span class="label">Connection Type</span><span class="value" id="connType">-</span></div>
+      <div class="stat"><span class="label">Downlink (Mbps)</span><span class="value" id="downlink">-</span></div>
+      <div class="stat"><span class="label">RTT (ms)</span><span class="value" id="rtt">-</span></div>
+      <div class="stat"><span class="label">Online</span><span class="value" id="online">-</span></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot green"></span> Display</h2>
+      <div class="stat"><span class="label">Screen Resolution</span><span class="value" id="screen">-</span></div>
+      <div class="stat"><span class="label">Viewport</span><span class="value" id="viewport">-</span></div>
+      <div class="stat"><span class="label">Device Pixel Ratio</span><span class="value" id="dpr">-</span></div>
+      <div class="stat"><span class="label">Color Depth</span><span class="value" id="colorDepth">-</span></div>
+      <div class="stat"><span class="label">Color Scheme</span><span class="value" id="colorScheme">-</span></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="dot green"></span> Privacy Status</h2>
+      <div class="stat"><span class="label">WebRTC Leak</span><span class="value" id="webrtc">Checking...</span></div>
+      <div class="stat"><span class="label">Canvas Fingerprint</span><span class="value" id="canvas">Checking...</span></div>
+      <div class="stat"><span class="label">WebGL Vendor</span><span class="value" id="webgl">-</span></div>
+      <div class="stat"><span class="label">Timezone</span><span class="value" id="tz">-</span></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Search Keywords</h2>
+  <div class="shortcuts">
+    <span class="shortcut"><span class="key">@yt</span> YouTube</span>
+    <span class="shortcut"><span class="key">@r</span> Reddit</span>
+    <span class="shortcut"><span class="key">@gh</span> GitHub</span>
+    <span class="shortcut"><span class="key">@w</span> Wikipedia</span>
+    <span class="shortcut"><span class="key">@maps</span> Google Maps</span>
+    <span class="shortcut"><span class="key">@ddg</span> DuckDuckGo</span>
+    <span class="shortcut"><span class="key">@sx</span> SearXNG</span>
+    <span class="shortcut"><span class="key">@sp</span> StartPage</span>
+  </div>
+
+  <h2 class="section-title">Quick Links</h2>
+  <div class="shortcuts">
+    <a class="shortcut" href="about:preferences">Settings</a>
+    <a class="shortcut" href="about:addons">Extensions</a>
+    <a class="shortcut" href="about:config">about:config</a>
+    <a class="shortcut" href="about:performance">Performance</a>
+    <a class="shortcut" href="about:memory">Memory</a>
+    <a class="shortcut" href="about:networking">Networking</a>
+    <a class="shortcut" href="about:support">Troubleshooting</a>
+    <a class="shortcut" href="about:crashes">Crash Reports</a>
+    <a class="shortcut" href="about:profiles">Profiles</a>
+    <a class="shortcut" href="https://browserleaks.com" target="_blank">BrowserLeaks</a>
+    <a class="shortcut" href="https://www.dnsleaktest.com" target="_blank">DNS Leak Test</a>
+  </div>
+
+  <h2 class="section-title">Utility Scripts</h2>
+  <div class="grid" style="margin-top: 0;">
+    <div class="card">
+      <h2>Available Scripts</h2>
+      <table>
+        <tr><td>Backup Profile</td><td><code>scripts\Backup-Profile.ps1</code></td></tr>
+        <tr><td>Restore Profile</td><td><code>scripts\Backup-Profile.ps1 -Restore</code></td></tr>
+        <tr><td>Check for Updates</td><td><code>scripts\Update-WolfPack.ps1 -Check</code></td></tr>
+        <tr><td>Install Update</td><td><code>scripts\Update-WolfPack.ps1</code></td></tr>
+        <tr><td>Privacy Profile</td><td><code>scripts\Switch-NetworkProfile.ps1 -Profile Privacy</code></td></tr>
+        <tr><td>Balanced Profile</td><td><code>scripts\Switch-NetworkProfile.ps1 -Profile Balanced</code></td></tr>
+        <tr><td>Speed Profile</td><td><code>scripts\Switch-NetworkProfile.ps1 -Profile Speed</code></td></tr>
+        <tr><td>Register as Default</td><td><code>scripts\Register-Browser.ps1</code></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://github.com/SysAdminDoc/WolfPack">WolfPack</a> by SysAdminDoc
+  </div>
+
+<script>
+  // Browser info
+  const ua = navigator.userAgent;
+  document.getElementById('ua').textContent = ua.length > 60 ? ua.substring(0, 60) + '...' : ua;
+  document.getElementById('platform').textContent = navigator.platform || 'N/A';
+  document.getElementById('lang').textContent = navigator.language;
+  document.getElementById('cookies').textContent = navigator.cookieEnabled ? 'Yes' : 'No';
+  document.getElementById('dnt').textContent = navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled';
+  document.getElementById('cores').textContent = navigator.hardwareConcurrency || 'Hidden';
+  document.getElementById('memory').textContent = navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Hidden';
+
+  // Network
+  const conn = navigator.connection || navigator.mozConnection;
+  if (conn) {
+    document.getElementById('connType').textContent = conn.effectiveType || 'Unknown';
+    document.getElementById('downlink').textContent = conn.downlink || '-';
+    document.getElementById('rtt').textContent = conn.rtt || '-';
+  }
+  document.getElementById('online').textContent = navigator.onLine ? 'Yes' : 'No';
+
+  // Display
+  document.getElementById('screen').textContent = screen.width + ' x ' + screen.height;
+  document.getElementById('viewport').textContent = window.innerWidth + ' x ' + window.innerHeight;
+  document.getElementById('dpr').textContent = window.devicePixelRatio;
+  document.getElementById('colorDepth').textContent = screen.colorDepth + '-bit';
+  document.getElementById('colorScheme').textContent =
+    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark' : 'Light';
+
+  // Privacy checks
+  document.getElementById('tz').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // WebGL
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl');
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    document.getElementById('webgl').textContent = dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : 'Hidden';
+  } catch(e) { document.getElementById('webgl').textContent = 'Blocked'; }
+
+  // Canvas fingerprint
+  try {
+    const c = document.createElement('canvas');
+    c.width = 200; c.height = 50;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#f60'; ctx.fillRect(125,1,62,20);
+    ctx.fillStyle = '#069'; ctx.font = '11px Arial';
+    ctx.fillText('WolfPack Canvas Test', 2, 15);
+    const data = c.toDataURL();
+    document.getElementById('canvas').textContent = data.length < 100 ? 'Blocked' : 'Visible';
+    document.getElementById('canvas').className = 'value ' + (data.length < 100 ? 'good' : 'warn');
+  } catch(e) {
+    document.getElementById('canvas').textContent = 'Blocked';
+    document.getElementById('canvas').className = 'value good';
+  }
+
+  // WebRTC
+  try {
+    const pc = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]});
+    pc.createDataChannel('');
+    pc.createOffer().then(o => pc.setLocalDescription(o));
+    const ips = new Set();
+    pc.onicecandidate = e => {
+      if (!e.candidate) {
+        pc.close();
+        const el = document.getElementById('webrtc');
+        if (ips.size === 0) { el.textContent = 'Protected'; el.className = 'value good'; }
+        else { el.textContent = [...ips].join(', '); el.className = 'value bad'; }
+        return;
+      }
+      const m = e.candidate.candidate.match(/([0-9]{1,3}\.){3}[0-9]{1,3}/);
+      if (m && !m[0].startsWith('0.') && m[0] !== '0.0.0.0') ips.add(m[0]);
+    };
+    setTimeout(() => { pc.close(); if (document.getElementById('webrtc').textContent === 'Checking...') {
+      document.getElementById('webrtc').textContent = 'Protected'; document.getElementById('webrtc').className = 'value good'; }
+    }, 5000);
+  } catch(e) {
+    document.getElementById('webrtc').textContent = 'Blocked';
+    document.getElementById('webrtc').className = 'value good';
+  }
+</script>
+</body>
+</html>

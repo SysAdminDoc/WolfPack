@@ -75,6 +75,46 @@
                     "Method": "GET",
                     "URLTemplate": "https://www.startpage.com/sp/search?query={searchTerms}&cat=web&pl=opensearch",
                     "IconURL": "https://www.startpage.com/favicon.ico"
+                },
+                {
+                    "Name": "YouTube",
+                    "Description": "Search YouTube videos",
+                    "Alias": "@yt",
+                    "Method": "GET",
+                    "URLTemplate": "https://www.youtube.com/results?search_query={searchTerms}",
+                    "IconURL": "https://www.youtube.com/favicon.ico"
+                },
+                {
+                    "Name": "Reddit",
+                    "Description": "Search Reddit",
+                    "Alias": "@r",
+                    "Method": "GET",
+                    "URLTemplate": "https://www.reddit.com/search/?q={searchTerms}",
+                    "IconURL": "https://www.reddit.com/favicon.ico"
+                },
+                {
+                    "Name": "GitHub",
+                    "Description": "Search GitHub repositories",
+                    "Alias": "@gh",
+                    "Method": "GET",
+                    "URLTemplate": "https://github.com/search?q={searchTerms}",
+                    "IconURL": "https://github.com/favicon.ico"
+                },
+                {
+                    "Name": "Wikipedia",
+                    "Description": "Search Wikipedia",
+                    "Alias": "@w",
+                    "Method": "GET",
+                    "URLTemplate": "https://en.wikipedia.org/wiki/Special:Search?search={searchTerms}",
+                    "IconURL": "https://en.wikipedia.org/favicon.ico"
+                },
+                {
+                    "Name": "Google Maps",
+                    "Description": "Search Google Maps",
+                    "Alias": "@maps",
+                    "Method": "GET",
+                    "URLTemplate": "https://www.google.com/maps/search/{searchTerms}",
+                    "IconURL": "https://www.google.com/favicon.ico"
                 }
             ]
         },
@@ -138,6 +178,47 @@
                 ]
             }
         ],
+        "3rdparty": {
+            "Extensions": {
+                "uBlock0@AyGrush": {
+                    "adminSettings": {
+                        "selectedFilterLists": [
+                            "user-filters",
+                            "ublock-filters",
+                            "ublock-badware",
+                            "ublock-privacy",
+                            "ublock-quick-fixes",
+                            "ublock-unbreak",
+                            "easylist",
+                            "easyprivacy",
+                            "urlhaus-1",
+                            "plowe-0",
+                            "fanboy-cookiemonster",
+                            "ublock-annoyances",
+                            "fanboy-annoyance",
+                            "fanboy-social",
+                            "adguard-annoyance",
+                            "adguard-social",
+                            "adguard-spyware-url",
+                            "block-lan",
+                            "dpollock-0"
+                        ]
+                    }
+                },
+                "sponsorBlocker@ajay.app": {
+                    "categorySelections": [
+                        {"name": "sponsor", "option": 1},
+                        {"name": "selfpromo", "option": 1},
+                        {"name": "interaction", "option": 1},
+                        {"name": "intro", "option": 2},
+                        {"name": "outro", "option": 2},
+                        {"name": "preview", "option": 2},
+                        {"name": "music_offtopic", "option": 0},
+                        {"name": "filler", "option": 2}
+                    ]
+                }
+            }
+        },
         "Permissions": {
             "Camera": {
                 "BlockNewRequests": true

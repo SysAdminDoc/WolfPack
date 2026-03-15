@@ -1,0 +1,34 @@
+{
+    "version": 5,
+    "lastUserContextId": 4,
+    "identities": [
+        {
+            "userContextId": 1,
+            "name": "Personal",
+            "icon": "fingerprint",
+            "color": "blue",
+            "public": true
+        },
+        {
+            "userContextId": 2,
+            "name": "Work",
+            "icon": "briefcase",
+            "color": "orange",
+            "public": true
+        },
+        {
+            "userContextId": 3,
+            "name": "Shopping",
+            "icon": "cart",
+            "color": "green",
+            "public": true
+        },
+        {
+            "userContextId": 4,
+            "name": "Banking",
+            "icon": "dollar",
+            "color": "yellow",
+            "public": true
+        }
+    ]
+}

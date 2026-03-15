@@ -1,5 +1,5 @@
 // =============================================================================
-// WolfPack - user.js v0.4.0
+// WolfPack - user.js v0.5.0
 // Custom configuration for WolfPack (LibreWolf-based) distribution
 // =============================================================================
 
@@ -295,15 +295,17 @@ user_pref("widget.non-native-theme.scrollbar.style", 3);
 user_pref("browser.compactmode.show", true);
 user_pref("browser.uidensity", 1);
 
-// Vertical tabs (native Firefox sidebar tabs)
+// Vertical tabs (native Firefox sidebar tabs, collapsed by default)
 user_pref("sidebar.verticalTabs", true);
 user_pref("sidebar.revamp", true);
+user_pref("sidebar.visibility", "hide-sidebar");
 
 // New tab
 user_pref("browser.newtabpage.enabled", true);
 user_pref("browser.newtabpage.activity-stream.showWeather", true);
 user_pref("browser.newtabpage.activity-stream.weather.display", "detailed");
 user_pref("browser.newtabpage.activity-stream.weather.temperatureUnits", "f");
+user_pref("browser.newtabpage.activity-stream.default.sites", "https://github.com,https://reddit.com,https://youtube.com,https://wikipedia.org,https://chatgpt.com,https://news.ycombinator.com,https://twitch.tv,https://discord.com");
 
 // Downloads - use download dir instead of always prompting
 user_pref("browser.download.autohideButton", false);

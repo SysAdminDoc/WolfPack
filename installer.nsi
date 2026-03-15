@@ -1,5 +1,5 @@
 ; =============================================================================
-; WolfPack - NSIS Installer v1.3.0
+; WolfPack - NSIS Installer v1.4.0
 ; =============================================================================
 
 !include "MUI2.nsh"
@@ -122,8 +122,11 @@ Section "Uninstall"
     Delete "$INSTDIR\portable.ini"
     Delete "$INSTDIR\wolfpack.ico"
     Delete "$INSTDIR\WolfPackPortable.ini"
+    Delete "$INSTDIR\version.txt"
     RMDir /r "$INSTDIR\scripts"
     RMDir /r "$INSTDIR\Backups"
+    RMDir /r "$INSTDIR\dashboard"
+    RMDir /r "$INSTDIR\userscripts"
     Delete "$INSTDIR\uninstall.exe"
     ; Clean up old naming
     Delete "$INSTDIR\LibreWolf.bat"

@@ -133,6 +133,64 @@ url-prefix(about:certerror) {
   }
 }
 
+/* PDF Viewer - Catppuccin Mocha */
+@-moz-document url-prefix("about:blank") url-scheme("file") {
+  /* Target PDF.js viewer */
+}
+@-moz-document regexp(".*\\.pdf$"),
+url-prefix("resource://pdf.js/") {
+  :root {
+    --body-bg-color: #1e1e2e !important;
+    --scrollbar-color: #585b70 !important;
+    --scrollbar-bg-color: #1e1e2e !important;
+    --toolbar-icon-bg-color: #cdd6f4 !important;
+    --toolbar-icon-hover-bg-color: #89b4fa !important;
+    --main-color: #cdd6f4 !important;
+    --body-color: #cdd6f4 !important;
+    --errorWrapper-bg-color: #f38ba8 !important;
+    --progressBar-color: #89b4fa !important;
+    --progressBar-indeterminate-bg-color: #313244 !important;
+    --progressBar-bg-color: #45475a !important;
+    --toolbar-bg-color: #181825 !important;
+    --toolbar-border-color: #313244 !important;
+    --button-hover-color: #45475a !important;
+    --toggled-btn-color: #cdd6f4 !important;
+    --toggled-btn-bg-color: #45475a !important;
+    --toggled-hover-active-btn-color: #89b4fa !important;
+    --dropdown-btn-bg-color: #313244 !important;
+    --separator-color: #45475a !important;
+    --field-color: #cdd6f4 !important;
+    --field-bg-color: #313244 !important;
+    --field-border-color: #45475a !important;
+    --treeitem-color: #cdd6f4 !important;
+    --treeitem-bg-color: #313244 !important;
+    --treeitem-hover-color: #cdd6f4 !important;
+    --treeitem-hover-bg-color: #45475a !important;
+    --treeitem-selected-color: #1e1e2e !important;
+    --treeitem-selected-bg-color: #89b4fa !important;
+    --sidebaritem-bg-color: #313244 !important;
+    --doorhanger-bg-color: #313244 !important;
+    --doorhanger-border-color: #45475a !important;
+    --doorhanger-hover-bg-color: #45475a !important;
+    --doorhanger-separator-color: #45475a !important;
+    --dialog-button-border: 1px solid #585b70 !important;
+    --dialog-button-bg-color: #45475a !important;
+    --dialog-button-hover-bg-color: #585b70 !important;
+    --findbar-nextprevious-btn-bg-color: #45475a !important;
+    --overlay-button-bg-color: #89b4fa !important;
+    --overlay-button-hover-bg-color: #74c7ec !important;
+    --loading-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>") !important;
+  }
+
+  #viewerContainer {
+    scrollbar-color: #585b70 #1e1e2e;
+  }
+
+  #sidebarContent {
+    background-color: #181825 !important;
+  }
+}
+
 /* Preferences page accent indicator - Catppuccin Blue */
 @-moz-document url-prefix(about:preferences),
 url-prefix(about:addons) {

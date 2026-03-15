@@ -1,5 +1,5 @@
 # =============================================================================
-# WolfPack - Build Script v1.3.0
+# WolfPack - Build Script v1.4.0
 # Downloads latest LibreWolf, injects custom config, packages portable + installer
 # =============================================================================
 
@@ -286,14 +286,7 @@ Default=1
         }
     }
 
-    # 11. Copy utility scripts
-    $backupScript = Join-Path $ScriptDir "scripts\Backup-Profile.ps1"
-    if (Test-Path $backupScript) {
-        $scriptsDir = Join-Path $lwRoot "scripts"
-        New-Item -ItemType Directory -Path $scriptsDir -Force | Out-Null
-        Copy-Item $backupScript (Join-Path $scriptsDir "Backup-Profile.ps1") -Force
-        Write-Success "  Backup-Profile.ps1 -> scripts/"
-    }
+    # 11. (scripts copied in step 14 below)
 
     # 12. Copy PortableApps.com INI
     $paIni = Join-Path $ScriptDir "WolfPackPortable.ini"
@@ -302,7 +295,52 @@ Default=1
         Write-Success "  WolfPackPortable.ini -> root"
     }
 
-    # 13. Create portable marker file (tells LibreWolf to use local profiles)
+    # 13b. Copy containers.json into profile
+    $containersJson = Join-Path $ScriptDir "containers.json"
+    if (Test-Path $containersJson) {
+        Copy-Item $containersJson (Join-Path $defaultProfile "containers.json") -Force
+        Write-Success "  containers.json -> Profiles/Default/"
+    }
+
+    # 14. Copy all utility scripts
+    $repoScripts = Join-Path $ScriptDir "scripts"
+    if (Test-Path $repoScripts) {
+        $scriptsDir = Join-Path $lwRoot "scripts"
+        New-Item -ItemType Directory -Path $scriptsDir -Force | Out-Null
+        Get-ChildItem -Path $repoScripts -Filter "*.ps1" | ForEach-Object {
+            Copy-Item $_.FullName (Join-Path $scriptsDir $_.Name) -Force
+            Write-Success "  $($_.Name) -> scripts/"
+        }
+    }
+
+    # 15. Copy dashboard
+    $dashboardSrc = Join-Path $ScriptDir "dashboard"
+    if (Test-Path $dashboardSrc) {
+        $dashboardDest = Join-Path $lwRoot "dashboard"
+        New-Item -ItemType Directory -Path $dashboardDest -Force | Out-Null
+        Copy-Item (Join-Path $dashboardSrc "index.html") (Join-Path $dashboardDest "index.html") -Force
+        Write-Success "  dashboard/index.html -> root"
+    }
+
+    # 16. Copy userscripts bundle
+    $userscriptsSrc = Join-Path $ScriptDir "userscripts"
+    if (Test-Path $userscriptsSrc) {
+        $userscriptsDest = Join-Path $lwRoot "userscripts"
+        New-Item -ItemType Directory -Path $userscriptsDest -Force | Out-Null
+        Get-ChildItem -Path $userscriptsSrc -Filter "*.user.js" | ForEach-Object {
+            Copy-Item $_.FullName (Join-Path $userscriptsDest $_.Name) -Force
+            Write-Success "  $($_.Name) -> userscripts/"
+        }
+    }
+
+    # 17. Copy version.txt
+    $versionFile = Join-Path $ScriptDir "version.txt"
+    if (Test-Path $versionFile) {
+        Copy-Item $versionFile (Join-Path $lwRoot "version.txt") -Force
+        Write-Success "  version.txt -> root"
+    }
+
+    # 13a. Create portable marker file (tells LibreWolf to use local profiles)
     $portableMarker = Join-Path $lwRoot "portable.ini"
     @"
 [Portable]

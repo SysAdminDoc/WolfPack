@@ -1,5 +1,39 @@
 # Changelog
 
+## v1.4.0 (2026-03-15)
+
+### Search & Navigation
+- Custom search keyword engines: @yt (YouTube), @r (Reddit), @gh (GitHub), @w (Wikipedia), @maps (Google Maps), @ddg (DuckDuckGo), @ddgl (DuckDuckGo Lite), @sx (SearXNG), @sp (StartPage)
+- Curated default new tab sites: GitHub, Reddit, YouTube, Wikipedia, ChatGPT, Hacker News, Twitch, Discord
+
+### UI/UX
+- Sidebar hidden by default (vertical tabs still available via Ctrl+B)
+- WolfPack Dashboard page with browser info, network stats, privacy checks, and WebRTC leak detection
+- Catppuccin Mocha PDF viewer theme (toolbar, sidebar, scrollbar, buttons)
+
+### Containers & Privacy
+- Pre-seeded container identities (containers.json): Personal, Work, Shopping, Banking
+
+### Extension Config Pre-Seeding
+- uBlock/uBlockVanced: Full filter list selection via managed storage (EasyList, EasyPrivacy, Fanboy Annoyances, AdGuard Social/Spyware, cookie notices, LAN block)
+- SponsorBlock: Category auto-skip config (sponsors, self-promo, interaction skipped; intros/outros/previews/filler shown in bar)
+
+### Userscript Bundle
+- Return YouTube Dislike - shows dislike count via returnyoutubedislike.com API
+- Old Reddit Redirect - auto-redirects to old.reddit.com
+- Google Direct Links - removes tracking redirects from Google search results
+- Auto Cookie Consent - auto-dismisses cookie banners (prefers reject/necessary-only)
+- Wider GitHub - full-width code views and READMEs
+
+### Tools & Scripts
+- Auto-updater script (`scripts/Update-WolfPack.ps1`) - checks GitHub releases, hot-swaps browser files
+- Network profile switcher (`scripts/Switch-NetworkProfile.ps1`) - Privacy/Balanced/Speed profiles
+- Windows browser registration (`scripts/Register-Browser.ps1`) - registers WolfPack in Default Apps
+
+### Build System
+- Build script copies containers.json, all scripts, dashboard, userscripts, and version.txt
+- Installer uninstall section updated for new files/directories
+
 ## v1.3.0 (2026-03-15)
 
 ### Theme
