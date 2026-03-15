@@ -54,6 +54,10 @@ Section "Install" SecInstall
     ; Copy all files from the portable build
     File /r "${SOURCE_DIR}\*.*"
 
+    ; Copy WolfPack icon for shortcuts
+    SetOutPath "$INSTDIR"
+    File "assets\wolfpack.ico"
+
     ; Write registry keys
     WriteRegStr HKCU "Software\WolfPack" "InstallDir" "$INSTDIR"
     WriteRegStr HKCU "Software\WolfPack" "Version" "${VERSION}"
@@ -66,7 +70,7 @@ Section "Install" SecInstall
     WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\WolfPack" \
         "InstallLocation" "$INSTDIR"
     WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\WolfPack" \
-        "DisplayIcon" "$INSTDIR\LibreWolf\librewolf.exe,0"
+        "DisplayIcon" "$INSTDIR\wolfpack.ico"
     WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\WolfPack" \
         "Publisher" "SysAdminDoc"
     WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\WolfPack" \
@@ -88,13 +92,13 @@ Section "Install" SecInstall
     ; Start Menu shortcuts
     CreateDirectory "$SMPROGRAMS\WolfPack"
     CreateShortCut "$SMPROGRAMS\WolfPack\WolfPack.lnk" \
-        "$INSTDIR\WolfPack.vbs" "" "$INSTDIR\LibreWolf\librewolf.exe" 0
+        "$INSTDIR\WolfPack.vbs" "" "$INSTDIR\wolfpack.ico" 0
     CreateShortCut "$SMPROGRAMS\WolfPack\Uninstall.lnk" \
         "$INSTDIR\uninstall.exe"
 
     ; Desktop shortcut
     CreateShortCut "$DESKTOP\WolfPack.lnk" \
-        "$INSTDIR\WolfPack.vbs" "" "$INSTDIR\LibreWolf\librewolf.exe" 0
+        "$INSTDIR\WolfPack.vbs" "" "$INSTDIR\wolfpack.ico" 0
 
 SectionEnd
 
@@ -116,6 +120,7 @@ Section "Uninstall"
     Delete "$INSTDIR\ScheduledTask-Create.ps1"
     Delete "$INSTDIR\ScheduledTask-Remove.ps1"
     Delete "$INSTDIR\portable.ini"
+    Delete "$INSTDIR\wolfpack.ico"
     Delete "$INSTDIR\uninstall.exe"
     ; Clean up old naming
     Delete "$INSTDIR\LibreWolf.bat"

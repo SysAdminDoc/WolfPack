@@ -42,15 +42,6 @@
             "DefaultPrivate": "Google",
             "Add": [
                 {
-                    "Name": "Google",
-                    "Description": "Google Search",
-                    "Alias": "@g",
-                    "Method": "GET",
-                    "URLTemplate": "https://www.google.com/search?q={searchTerms}",
-                    "SuggestURLTemplate": "https://www.google.com/complete/search?client=firefox&q={searchTerms}",
-                    "IconURL": "https://www.google.com/favicon.ico"
-                },
-                {
                     "Name": "DuckDuckGo",
                     "Description": "Privacy-focused search engine",
                     "Alias": "@ddg",

@@ -8,17 +8,17 @@
 
 # BrandFullNameInternal is used for some registry and file system values
 # instead of BrandFullName and typically should not be modified.
-!define BrandFullNameInternal "LibreWolf"
-!define BrandFullName         "LibreWolf"
-!define CompanyName           "LibreWolf"
-!define URLInfoAbout          "https://www.libreWolf.gitlab.io"
-!define HelpLink              "https://github.com/LibreWolf-Browser"
+!define BrandFullNameInternal "WolfPack"
+!define BrandFullName         "WolfPack"
+!define CompanyName           "SysAdminDoc"
+!define URLInfoAbout          "https://github.com/SysAdminDoc/WolfPack"
+!define HelpLink              "https://github.com/SysAdminDoc/WolfPack/issues"
 
-!define URLStubDownloadX86 "https://github.com/LibreWolf-Browser/LibreWolf/releases"
-!define URLStubDownloadAMD64 "https://github.com/LibreWolf-Browser/LibreWolf/releases"
-!define URLStubDownloadAArch64 "https://github.com/LibreWolf-Browser/LibreWolf/releases"
-!define URLManualDownload "https://github.com/LibreWolf-Browser/LibreWolf/releases"
-!define URLSystemRequirements "https://github.com/LibreWolf-Browser/LibreWolf"
+!define URLStubDownloadX86 "https://github.com/SysAdminDoc/WolfPack/releases"
+!define URLStubDownloadAMD64 "https://github.com/SysAdminDoc/WolfPack/releases"
+!define URLStubDownloadAArch64 "https://github.com/SysAdminDoc/WolfPack/releases"
+!define URLManualDownload "https://github.com/SysAdminDoc/WolfPack/releases"
+!define URLSystemRequirements "https://github.com/SysAdminDoc/WolfPack"
 !define Channel "unofficial"
 
 # The installer's certificate name and issuer expected by the stub installer

@@ -191,7 +191,14 @@ function Inject-Config($lwRoot) {
     Copy-Item (Join-Path $ScriptDir "user.js") (Join-Path $defaultProfile "user.js") -Force
     Write-Success "  user.js -> Profiles/Default/"
 
-    # 5. Copy chrome theme from old portable if it exists
+    # 5. Remove stale search cache so policies rebuild it fresh on first launch
+    $staleSearch = Join-Path $defaultProfile "search.json.mozlz4"
+    if (Test-Path $staleSearch) {
+        Remove-Item $staleSearch -Force
+        Write-Success "  Removed stale search.json.mozlz4 (will rebuild from policies)"
+    }
+
+    # 6. Copy chrome theme from old portable if it exists
     $oldChrome = Join-Path $ScriptDir "..\LibreWolf_DarkPortable\Profiles\Default\chrome"
     if (Test-Path $oldChrome) {
         $chromeDir = Join-Path $defaultProfile "chrome"
@@ -199,7 +206,7 @@ function Inject-Config($lwRoot) {
         Write-Success "  chrome/ theme -> Profiles/Default/chrome/"
     }
 
-    # 6. Copy extension configs if they exist
+    # 7. Copy extension configs if they exist
     $extConfigs = Join-Path $ScriptDir "..\LibreWolf_DarkPortable\Extension_Configs"
     if (Test-Path $extConfigs) {
         $destConfigs = Join-Path $lwRoot "Extension_Configs"
@@ -207,7 +214,7 @@ function Inject-Config($lwRoot) {
         Write-Success "  Extension_Configs/ -> root"
     }
 
-    # 7. Create profiles.ini for portable mode
+    # 8. Create profiles.ini for portable mode
     $profilesIni = @"
 [General]
 StartWithLastProfile=1
@@ -222,7 +229,39 @@ Default=1
     Set-Content -Path (Join-Path $appDir "profiles.ini") -Value $profilesIni -Encoding UTF8
     Write-Success "  profiles.ini -> app root"
 
-    # 8. Create portable marker file (tells LibreWolf to use local profiles)
+    # 10. Inject WolfPack branding (icon + VisualElements)
+    $icoSrc = Join-Path $ScriptDir "assets\wolfpack.ico"
+    $logoSrc = Join-Path $ScriptDir "assets\wolfpack-logo.png"
+    if (Test-Path $icoSrc) {
+        Copy-Item $icoSrc (Join-Path $lwRoot "wolfpack.ico") -Force
+        Write-Success "  wolfpack.ico -> root"
+    }
+    # Replace VisualElements PNGs with WolfPack logo
+    $veDir = Join-Path $appDir "browser\VisualElements"
+    if ((Test-Path $veDir) -and (Test-Path $logoSrc)) {
+        try {
+            Add-Type -AssemblyName System.Drawing
+            $srcImg = [System.Drawing.Image]::FromFile((Resolve-Path $logoSrc).Path)
+            foreach ($size in @(150, 70)) {
+                $destFile = Join-Path $veDir "VisualElements_$size.png"
+                $bmp = New-Object System.Drawing.Bitmap $size, $size
+                $g = [System.Drawing.Graphics]::FromImage($bmp)
+                $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+                $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::HighQuality
+                $g.Clear([System.Drawing.Color]::Transparent)
+                $g.DrawImage($srcImg, 0, 0, $size, $size)
+                $g.Dispose()
+                $bmp.Save($destFile, [System.Drawing.Imaging.ImageFormat]::Png)
+                $bmp.Dispose()
+                Write-Success "  VisualElements_$size.png replaced with WolfPack logo"
+            }
+            $srcImg.Dispose()
+        } catch {
+            Write-Warn "  Could not generate VisualElements PNGs: $_"
+        }
+    }
+
+    # 11. Create portable marker file (tells LibreWolf to use local profiles)
     $portableMarker = Join-Path $lwRoot "portable.ini"
     @"
 [Portable]

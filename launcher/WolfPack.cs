@@ -68,7 +68,7 @@ namespace WolfPack
             catch (Exception ex)
             {
                 System.Windows.Forms.MessageBox.Show(
-                    "Failed to launch LibreWolf:\n" + ex.Message,
+                    "Failed to launch WolfPack:\n" + ex.Message,
                     "WolfPack",
                     System.Windows.Forms.MessageBoxButtons.OK,
                     System.Windows.Forms.MessageBoxIcon.Error);

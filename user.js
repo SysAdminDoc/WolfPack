@@ -11,15 +11,11 @@ user_pref("general.config.obscure_value", 0);
 
 // =============================================================================
 // SEARCH ENGINE
+// Default engine is set via policies.json SearchEngines.Default
 // =============================================================================
-user_pref("browser.search.defaultenginename", "Google");
-user_pref("browser.search.order.1", "Google");
-user_pref("browser.search.selectedEngine", "Google");
 user_pref("browser.search.update", false);
 user_pref("browser.urlbar.placeholderName", "Google");
 user_pref("browser.urlbar.placeholderName.private", "Google");
-// Force re-application of search engine policy on next launch
-user_pref("browser.policies.runOncePerModification.setDefaultSearchEngine", "");
 user_pref("browser.search.suggest.enabled", true);
 user_pref("browser.urlbar.suggest.searches", true);
 

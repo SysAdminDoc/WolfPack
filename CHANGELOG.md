@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.2.0 (2026-03-15)
+
+### Fixes
+- Fixed Google not being set as default search engine (removed deprecated prefs, fixed duplicate policy engine, build now clears stale search cache)
+
+### Branding
+- Replaced all remaining LibreWolf icons with WolfPack branding (VisualElements, installer shortcuts, Add/Remove Programs, Start Menu)
+- Removed old `librewolf.ico` and `librewolf-logo.png` assets
+- Removed stale `launcher/LibreWolf-Dark.exe`
+- Updated `branding.nsi` with WolfPack name/URLs for source builds
+- Build script now auto-generates VisualElements PNGs from `wolfpack-logo.png`
+
 ## v1.1.0 (2026-03-13)
 
 Rebranded from "LibreWolf Portable" to **WolfPack**.
