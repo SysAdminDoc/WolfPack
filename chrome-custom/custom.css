@@ -204,6 +204,106 @@
   border-radius: 8px !important;
 }
 
+/* =========================================================================
+ * Remove top tab margin so clicks at the top edge hit tabs directly
+ * ========================================================================= */
+
+:root {
+  --uc-tab-top-margin: 0px !important;
+}
+
+#tabbrowser-tabs {
+  margin-top: 0 !important;
+}
+
+/* =========================================================================
+ * Nav buttons - force back/forward/reload to left of URL bar
+ * ========================================================================= */
+
+#back-button {
+  display: -moz-box !important;
+  visibility: visible !important;
+  order: -3 !important;
+}
+
+#forward-button {
+  display: -moz-box !important;
+  visibility: visible !important;
+  order: -2 !important;
+}
+
+#stop-reload-button {
+  display: -moz-box !important;
+  visibility: visible !important;
+  order: -1 !important;
+}
+
+#urlbar-container {
+  order: 0 !important;
+}
+
+/* =========================================================================
+ * URL bar cleanup - hide all icons/buttons except extension (addon) icons
+ * ========================================================================= */
+
+/* Site identity (lock icon) */
+#identity-box,
+#identity-icon-box {
+  display: none !important;
+}
+
+/* Tracking protection shield */
+#tracking-protection-icon-container {
+  display: none !important;
+}
+
+/* Bookmark star */
+#star-button-box {
+  display: none !important;
+}
+
+/* Reader mode */
+#reader-mode-button {
+  display: none !important;
+}
+
+/* Zoom indicator */
+#urlbar-zoom-button {
+  display: none !important;
+}
+
+/* Page action menu (three dots) */
+#pageActionButton {
+  display: none !important;
+}
+
+/* Permissions indicators (camera, mic, location, etc.) */
+#notification-popup-box {
+  display: none !important;
+}
+
+/* Container indicator */
+#userContext-indicator {
+  display: none !important;
+}
+
+/* Picture-in-picture indicator */
+#picture-in-picture-button {
+  display: none !important;
+}
+
+/* Share button, translations, etc. */
+#translations-button,
+#fxa-toolbar-menu-button,
+#share-button {
+  display: none !important;
+}
+
+/* Any remaining page action icons */
+#page-action-buttons > :not(#star-button-box) {
+  display: none !important;
+}
+
 /* Loading throbber - Catppuccin Blue accent */
 .tab-throbber[busy]::before {
   fill: #89b4fa !important;
