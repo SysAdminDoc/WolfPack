@@ -1,5 +1,5 @@
 ; =============================================================================
-; WolfPack - NSIS Installer v1.2.0
+; WolfPack - NSIS Installer v1.3.0
 ; =============================================================================
 
 !include "MUI2.nsh"
@@ -121,6 +121,9 @@ Section "Uninstall"
     Delete "$INSTDIR\ScheduledTask-Remove.ps1"
     Delete "$INSTDIR\portable.ini"
     Delete "$INSTDIR\wolfpack.ico"
+    Delete "$INSTDIR\WolfPackPortable.ini"
+    RMDir /r "$INSTDIR\scripts"
+    RMDir /r "$INSTDIR\Backups"
     Delete "$INSTDIR\uninstall.exe"
     ; Clean up old naming
     Delete "$INSTDIR\LibreWolf.bat"

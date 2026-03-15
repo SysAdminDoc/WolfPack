@@ -1,5 +1,35 @@
 # Changelog
 
+## v1.3.0 (2026-03-15)
+
+### Theme
+- Full Catppuccin Mocha theme overriding Edge-Frfox color variables across all browser chrome
+- Catppuccin-themed about: pages, new tab, private browsing, error pages, and preferences
+- Accent color: Catppuccin Blue (#89b4fa), close button: Catppuccin Red (#f38ba8)
+- Themed scrollbars, tooltips, library window, dialogs, and selection highlight
+
+### UI/UX
+- Native vertical tabs enabled (Firefox sidebar tabs)
+- Compact density mode enabled by default
+- Pre-configured container tabs: Personal, Work, Shopping, Banking
+- Curated bookmark toolbar with Privacy Tools, Dev Tools, and Speed Tests folders
+- Picture-in-Picture enabled with improved toggle
+- Strict site permissions: camera, microphone, location, and notifications blocked by default
+
+### Network
+- DNS-over-HTTPS via AdGuard DNS (ad-blocking resolver)
+- Startup performance tuning (session restore, no skeleton UI)
+
+### Tools
+- Profile backup/restore PowerShell script (`scripts/Backup-Profile.ps1`)
+- PortableApps.com integration INI file
+- Build script now injects custom chrome CSS and utility scripts
+
+### Policies
+- Curated managed bookmarks bar (privacy tools, dev tools, speed tests)
+- Site permissions enforced via enterprise policy
+- Updated support menu link to WolfPack GitHub
+
 ## v1.2.0 (2026-03-15)
 
 ### Fixes

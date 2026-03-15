@@ -1,5 +1,5 @@
 # =============================================================================
-# WolfPack - Build Script v1.2.0
+# WolfPack - Build Script v1.3.0
 # Downloads latest LibreWolf, injects custom config, packages portable + installer
 # =============================================================================
 
@@ -206,6 +206,31 @@ function Inject-Config($lwRoot) {
         Write-Success "  chrome/ theme -> Profiles/Default/chrome/"
     }
 
+    # 6b. Overlay WolfPack custom chrome files (Catppuccin Mocha theme, etc.)
+    $customChrome = Join-Path $ScriptDir "chrome-custom"
+    if (Test-Path $customChrome) {
+        $chromeDir = Join-Path $defaultProfile "chrome"
+        New-Item -ItemType Directory -Path $chromeDir -Force | Out-Null
+        # Copy custom.css (imported by userChrome.css)
+        $customCss = Join-Path $customChrome "custom.css"
+        if (Test-Path $customCss) {
+            Copy-Item $customCss (Join-Path $chromeDir "custom.css") -Force
+            Write-Success "  custom.css (Catppuccin Mocha) -> chrome/"
+        }
+        # Append catppuccin-content.css to userContent.css
+        $catContent = Join-Path $customChrome "catppuccin-content.css"
+        $ucContent = Join-Path $chromeDir "userContent.css"
+        if ((Test-Path $catContent) -and (Test-Path $ucContent)) {
+            $append = "`n`n/* WolfPack Catppuccin Mocha content overrides */`n@import url(`"content/catppuccin.css`");"
+            Add-Content -Path $ucContent -Value $append -Encoding UTF8
+            # Also copy the actual file
+            $contentDir = Join-Path $chromeDir "content"
+            New-Item -ItemType Directory -Path $contentDir -Force | Out-Null
+            Copy-Item $catContent (Join-Path $contentDir "catppuccin.css") -Force
+            Write-Success "  catppuccin-content.css -> chrome/content/catppuccin.css"
+        }
+    }
+
     # 7. Copy extension configs if they exist
     $extConfigs = Join-Path $ScriptDir "..\LibreWolf_DarkPortable\Extension_Configs"
     if (Test-Path $extConfigs) {
@@ -261,7 +286,23 @@ Default=1
         }
     }
 
-    # 11. Create portable marker file (tells LibreWolf to use local profiles)
+    # 11. Copy utility scripts
+    $backupScript = Join-Path $ScriptDir "scripts\Backup-Profile.ps1"
+    if (Test-Path $backupScript) {
+        $scriptsDir = Join-Path $lwRoot "scripts"
+        New-Item -ItemType Directory -Path $scriptsDir -Force | Out-Null
+        Copy-Item $backupScript (Join-Path $scriptsDir "Backup-Profile.ps1") -Force
+        Write-Success "  Backup-Profile.ps1 -> scripts/"
+    }
+
+    # 12. Copy PortableApps.com INI
+    $paIni = Join-Path $ScriptDir "WolfPackPortable.ini"
+    if (Test-Path $paIni) {
+        Copy-Item $paIni (Join-Path $lwRoot "WolfPackPortable.ini") -Force
+        Write-Success "  WolfPackPortable.ini -> root"
+    }
+
+    # 13. Create portable marker file (tells LibreWolf to use local profiles)
     $portableMarker = Join-Path $lwRoot "portable.ini"
     @"
 [Portable]

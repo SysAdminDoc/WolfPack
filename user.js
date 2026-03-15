@@ -1,5 +1,5 @@
 // =============================================================================
-// WolfPack - user.js v0.3.0
+// WolfPack - user.js v0.4.0
 // Custom configuration for WolfPack (LibreWolf-based) distribution
 // =============================================================================
 
@@ -130,7 +130,10 @@ user_pref("network.predictor.enabled", true);
 user_pref("network.predictor.enable-prefetch", true);
 user_pref("network.prefetch-next", true);
 user_pref("network.proxy.socks_remote_dns", true);
-user_pref("network.trr.mode", 5);
+// DNS-over-HTTPS via AdGuard (ad-blocking resolver)
+user_pref("network.trr.mode", 2);
+user_pref("network.trr.uri", "https://dns.adguard-dns.com/dns-query");
+user_pref("network.trr.custom_uri", "https://dns.adguard-dns.com/dns-query");
 
 // =============================================================================
 // PRIVACY - DOM / API RESTRICTIONS
@@ -162,8 +165,15 @@ user_pref("privacy.clearOnShutdown_v2.browsingHistoryAndDownloads", false);
 user_pref("privacy.clearOnShutdown_v2.historyFormDataAndDownloads", false);
 user_pref("browser.privatebrowsing.forceMediaMemoryCache", true);
 user_pref("browser.privateWindowSeparation.enabled", false);
-user_pref("privacy.userContext.enabled", false);
 user_pref("browser.sessionstore.privacy_level", 0);
+
+// =============================================================================
+// CONTAINER TABS
+// Pre-configured containers: Personal, Work, Shopping, Banking
+// =============================================================================
+user_pref("privacy.userContext.enabled", true);
+user_pref("privacy.userContext.ui.enabled", true);
+user_pref("privacy.userContext.newTabContainerOnLeftClick.enabled", false);
 
 // =============================================================================
 // SECURITY
@@ -281,8 +291,13 @@ user_pref("devtools.theme", "dark");
 // Scrollbar
 user_pref("widget.non-native-theme.scrollbar.style", 3);
 
-// Compact mode
+// Compact mode + density
 user_pref("browser.compactmode.show", true);
+user_pref("browser.uidensity", 1);
+
+// Vertical tabs (native Firefox sidebar tabs)
+user_pref("sidebar.verticalTabs", true);
+user_pref("sidebar.revamp", true);
 
 // New tab
 user_pref("browser.newtabpage.enabled", true);
@@ -430,3 +445,26 @@ user_pref("apz.force_disable_desktop_zooming_scrollbars", false);
 user_pref("apz.paint_skipping.enabled", true);
 user_pref("apz.windows.use_direct_manipulation", true);
 user_pref("dom.event.wheel-deltaMode-lines.always-disabled", true);
+
+// =============================================================================
+// STARTUP PERFORMANCE
+// =============================================================================
+user_pref("browser.startup.preXulSkeletonUI", false);
+user_pref("browser.startup.homepage_override.mstone", "ignore");
+user_pref("browser.startup.page", 3);
+user_pref("browser.sessionstore.resume_from_crash", true);
+
+// =============================================================================
+// PICTURE-IN-PICTURE
+// =============================================================================
+user_pref("media.videocontrols.picture-in-picture.enabled", true);
+user_pref("media.videocontrols.picture-in-picture.video-toggle.enabled", true);
+user_pref("media.videocontrols.picture-in-picture.respect-disablePictureInPicture", false);
+
+// =============================================================================
+// SITE PERMISSIONS (strict defaults)
+// 0=allow, 1=ask, 2=block
+// =============================================================================
+user_pref("permissions.default.camera", 2);
+user_pref("permissions.default.microphone", 2);
+user_pref("permissions.default.geo", 2);

@@ -1,0 +1,147 @@
+/* =============================================================================
+ * WolfPack - Catppuccin Mocha Content Pages Override
+ * Appended to userContent.css to theme about: pages and error pages
+ * ============================================================================= */
+
+/* About pages - Catppuccin Mocha overrides */
+@-moz-document url-prefix(about:) {
+  :root {
+    --in-content-page-color: #cdd6f4 !important;
+    --in-content-page-background: #1e1e2e !important;
+    --in-content-deemphasized-text: #a6adc8 !important;
+    --in-content-box-background: #313244 !important;
+    --in-content-box-background-odd: rgb(205 214 244 / .05) !important;
+    --in-content-box-info-background: #181825 !important;
+    --in-content-icon-color: #bac2de !important;
+    --in-content-accent-color: #89b4fa !important;
+    --in-content-accent-color-active: #74c7ec !important;
+    --in-content-border-hover: #585b70 !important;
+    --in-content-border-color: #45475a !important;
+    --in-content-error-text-color: #f38ba8 !important;
+    --in-content-link-color: #89b4fa !important;
+    --in-content-link-color-hover: #74c7ec !important;
+    --in-content-link-color-active: #b4befe !important;
+    --in-content-link-color-visited: #cba6f7 !important;
+    --link-color: #89b4fa !important;
+    --link-color-hover: #74c7ec !important;
+    --link-color-active: #b4befe !important;
+    --link-color-visited: #cba6f7 !important;
+    --in-content-button-text-color: #cdd6f4 !important;
+    --in-content-button-background: #45475a !important;
+    --in-content-button-background-hover: #585b70 !important;
+    --in-content-button-background-active: #6c7086 !important;
+    --in-content-primary-button-text-color: #1e1e2e !important;
+    --in-content-primary-button-background: #89b4fa !important;
+    --in-content-primary-button-background-hover: #74c7ec !important;
+    --in-content-primary-button-background-active: #b4befe !important;
+    --color-accent-primary: #89b4fa !important;
+    --color-accent-primary-hover: #74c7ec !important;
+    --color-accent-primary-active: #b4befe !important;
+    --in-content-danger-button-background: #f38ba8 !important;
+    --in-content-danger-button-background-hover: #eba0ac !important;
+    --in-content-danger-button-background-active: #f38ba8 !important;
+    --in-content-focus-outline-color: #89b4fa !important;
+    --focus-outline-color: #89b4fa !important;
+    --in-content-table-background: #181825 !important;
+    --in-content-text-color: #cdd6f4 !important;
+    --border-interactive-color: #585b70 !important;
+    scrollbar-color: #585b70 #1e1e2e !important;
+  }
+
+  ::selection {
+    background-color: #89b4fa;
+    color: #1e1e2e;
+  }
+}
+
+/* New tab page - Catppuccin Mocha */
+@-moz-document url-prefix("about:newtab"),
+url-prefix("about:home"),
+url-prefix("about:firefoxview") {
+  :root:not([style*="color"])[lwt-newtab-brighttext] {
+    --newtab-background-color: #1e1e2e !important;
+    --newtab-background-color-secondary: #313244 !important;
+    --newtab-text-primary-color: #cdd6f4 !important;
+    --newtab-primary-action-background: #89b4fa !important;
+    --newtab-primary-element-text-color: #1e1e2e !important;
+    --newtab-wordmark-color: #a6adc8 !important;
+    --newtab-status-success: #a6e3a1 !important;
+    --newtab-status-error: #f38ba8 !important;
+    --newtab-border-color: #45475a !important;
+  }
+
+  /* Also target the non-lwtheme case */
+  :root:not([lwt-newtab], [lwt-newtab-brighttext]) {
+    --newtab-background-color: #1e1e2e !important;
+    --newtab-background-color-secondary: #313244 !important;
+    --newtab-text-primary-color: #cdd6f4 !important;
+    --newtab-primary-action-background: #89b4fa !important;
+    --newtab-primary-element-text-color: #1e1e2e !important;
+    --newtab-wordmark-color: #a6adc8 !important;
+    --newtab-status-success: #a6e3a1 !important;
+    --newtab-status-error: #f38ba8 !important;
+    --newtab-border-color: #45475a !important;
+  }
+}
+
+/* Private browsing - Catppuccin Mocha */
+@-moz-document url-prefix(about:privatebrowsing) {
+  :root {
+    --uc-wordmark-color: #a6adc8 !important;
+    --uc-background-color-secondary: #313244 !important;
+    --in-content-page-background: #1e1e2e !important;
+    --in-content-page-color: #cdd6f4 !important;
+    --in-content-focus-outline-color: #89b4fa !important;
+  }
+}
+
+/* Error pages (neterror, certerror) - WolfPack branded */
+@-moz-document url-prefix(about:neterror),
+url-prefix(about:certerror) {
+  :root {
+    --in-content-page-background: #1e1e2e !important;
+    --in-content-page-color: #cdd6f4 !important;
+    --text-color-error: #f38ba8 !important;
+  }
+
+  body {
+    background-color: #1e1e2e !important;
+    color: #cdd6f4 !important;
+  }
+
+  .title > h1 {
+    color: #f38ba8 !important;
+  }
+
+  #errorShortDesc {
+    color: #bac2de !important;
+  }
+
+  .btnPrimary, button.primary {
+    background-color: #89b4fa !important;
+    color: #1e1e2e !important;
+    border: none !important;
+  }
+
+  .btnPrimary:hover, button.primary:hover {
+    background-color: #74c7ec !important;
+  }
+
+  .btnSecondary, button:not(.primary) {
+    background-color: #45475a !important;
+    color: #cdd6f4 !important;
+  }
+}
+
+/* Preferences page accent indicator - Catppuccin Blue */
+@-moz-document url-prefix(about:preferences),
+url-prefix(about:addons) {
+  .category[selected]::before {
+    background-color: #89b4fa !important;
+  }
+
+  .toggle-button {
+    --toggle-dot-background-color: #cdd6f4 !important;
+    --toggle-dot-background-color-on-pressed: #1e1e2e !important;
+  }
+}

@@ -79,8 +79,81 @@
             ]
         },
         "SupportMenu": {
-            "Title": "LibreWolf Issue Tracker",
-            "URL": "https://codeberg.org/librewolf/issues"
+            "Title": "WolfPack on GitHub",
+            "URL": "https://github.com/SysAdminDoc/WolfPack/issues"
+        },
+        "Containers": {
+            "Default": [
+                {
+                    "name": "Personal",
+                    "icon": "fingerprint",
+                    "color": "blue"
+                },
+                {
+                    "name": "Work",
+                    "icon": "briefcase",
+                    "color": "orange"
+                },
+                {
+                    "name": "Shopping",
+                    "icon": "cart",
+                    "color": "green"
+                },
+                {
+                    "name": "Banking",
+                    "icon": "dollar",
+                    "color": "yellow"
+                }
+            ]
+        },
+        "ManagedBookmarks": [
+            { "toplevel_name": "WolfPack" },
+            {
+                "name": "Privacy Tools",
+                "children": [
+                    { "url": "https://privacyguides.org", "name": "Privacy Guides" },
+                    { "url": "https://tosdr.org", "name": "ToS;DR" },
+                    { "url": "https://haveibeenpwned.com", "name": "Have I Been Pwned?" },
+                    { "url": "https://bitwarden.com", "name": "Bitwarden" },
+                    { "url": "https://nextdns.io", "name": "NextDNS" }
+                ]
+            },
+            {
+                "name": "Dev Tools",
+                "children": [
+                    { "url": "https://github.com", "name": "GitHub" },
+                    { "url": "https://regex101.com", "name": "Regex101" },
+                    { "url": "https://jsonformatter.curiousconcept.com", "name": "JSON Formatter" },
+                    { "url": "https://caniuse.com", "name": "Can I Use" },
+                    { "url": "https://devdocs.io", "name": "DevDocs" }
+                ]
+            },
+            {
+                "name": "Speed Tests",
+                "children": [
+                    { "url": "https://speed.cloudflare.com", "name": "Cloudflare Speed" },
+                    { "url": "https://fast.com", "name": "Fast.com" },
+                    { "url": "https://www.dnsleaktest.com", "name": "DNS Leak Test" },
+                    { "url": "https://browserleaks.com", "name": "BrowserLeaks" }
+                ]
+            }
+        ],
+        "Permissions": {
+            "Camera": {
+                "BlockNewRequests": true
+            },
+            "Microphone": {
+                "BlockNewRequests": true
+            },
+            "Location": {
+                "BlockNewRequests": true
+            },
+            "Notifications": {
+                "BlockNewRequests": true
+            },
+            "Autoplay": {
+                "Default": "block-audio-video"
+            }
         }
     }
 }

@@ -1,0 +1,213 @@
+/* =============================================================================
+ * WolfPack - Catppuccin Mocha Theme Override
+ * Overrides Edge-Frfox color variables with Catppuccin Mocha palette
+ * Loaded via @import url("custom.css") in userChrome.css
+ * ============================================================================= */
+
+/* Catppuccin Mocha palette reference:
+ * Crust:    #11111b    Mantle:   #181825    Base:     #1e1e2e
+ * Surface0: #313244    Surface1: #45475a    Surface2: #585b70
+ * Overlay0: #6c7086    Overlay1: #7f849c    Overlay2: #9399b2
+ * Subtext0: #a6adc8    Subtext1: #bac2de    Text:     #cdd6f4
+ * Blue:     #89b4fa    Lavender: #b4befe    Sapphire: #74c7ec
+ * Sky:      #89dceb    Teal:     #94e2d5    Green:    #a6e3a1
+ * Yellow:   #f9e2af    Peach:    #fab387    Maroon:   #eba0ac
+ * Red:      #f38ba8    Mauve:    #cba6f7    Pink:     #f5c2e7
+ * Flamingo: #f2cdcd    Rosewater:#f5e0dc
+ */
+
+:root:not([lwtheme]),
+:root[privatebrowsingmode="temporary"]:where([style*="--lwt-accent-color: rgb(28, 27, 34)"]:not([style*="--newtab-background-color-secondary: rgb(66, 65, 77)"])) {
+  /* Toolbars */
+  --lwt-accent-color: #1e1e2e !important;
+  --lwt-accent-color-inactive: #181825 !important;
+  --lwt-text-color: #cdd6f4 !important;
+  --lwt-text-color-inactive: #a6adc8 !important;
+  --tab-selected-textcolor: #cdd6f4 !important;
+  --tab-selected-textcolor-inactive: #a6adc8 !important;
+  --tab-selected-bgcolor: var(--toolbar-bgcolor) !important;
+  --tab-attention-icon-color: #89b4fa !important;
+  --toolbar-bgcolor: #313244 !important;
+  --toolbar-non-lwt-bgcolor: var(--toolbar-bgcolor) !important;
+  --toolbar-color: #cdd6f4 !important;
+  --toolbarbutton-icon-fill: var(--toolbar-color) !important;
+  --toolbarbutton-icon-fill-attention: #89b4fa !important;
+  --toolbarseparator-color: color-mix(in srgb, #cdd6f4 25%, transparent) !important;
+  --chrome-content-separator-color: #585b70 !important;
+  --newtab-background-color: #1e1e2e !important;
+  --tabpanel-background-color: #1e1e2e !important;
+
+  /* Toolbar button overlays */
+  --toolbarbutton-hover-background: color-mix(in srgb, #cdd6f4 10%, transparent) !important;
+  --toolbarbutton-active-background: color-mix(in srgb, #cdd6f4 16%, transparent) !important;
+
+  /* Tab audio indicator */
+  --tab-icon-overlay-fill: #cdd6f4 !important;
+  --tab-icon-overlay-stroke: #313244 !important;
+
+  /* URL bar */
+  --toolbar-field-background-color: #1e1e2e !important;
+  --toolbar-field-color: #cdd6f4 !important;
+  --toolbar-field-border-color: transparent !important;
+  --toolbar-field-focus-background-color: #1e1e2e !important;
+  --toolbar-field-focus-color: #cdd6f4 !important;
+  --toolbar-field-focus-border-color: #89b4fa !important;
+  --urlbar-icon-fill-opacity: 0.7 !important;
+  --urlbar-box-bgcolor: rgb(205 214 244 / .08) !important;
+  --urlbar-box-hover-bgcolor: rgb(205 214 244 / .12) !important;
+  --urlbar-box-active-bgcolor: rgb(205 214 244 / .20) !important;
+  --urlbar-box-focus-bgcolor: rgb(205 214 244 / .12) !important;
+
+  /* URL bar suggestions */
+  --link-color: #89b4fa !important;
+  --uc-urlbarView-accent-color: #89b4fa !important;
+  --urlbarView-highlight-background: #45475a !important;
+  --urlbarView-highlight-color: #cdd6f4 !important;
+  --urlbarView-hover-background: #313244 !important;
+  --urlbarView-separator-color: #585b70 !important;
+
+  /* Menus/panels */
+  --arrowpanel-background: #313244 !important;
+  --arrowpanel-color: #cdd6f4 !important;
+  --arrowpanel-border-color: #45475a !important;
+  --arrowpanel-dimmed: #585b70 !important;
+  --arrowpanel-dimmed-further: #6c7086 !important;
+  --panel-separator-color: #45475a !important;
+  --panel-description-color: #bac2de !important;
+  --panel-disabled-color: #6c7086 !important;
+  --panel-item-hover-bgcolor: #45475a !important;
+  --panel-item-active-bgcolor: #585b70 !important;
+  --panel-banner-item-update-supported-bgcolor: #a6e3a1 !important;
+
+  /* Primary button - Catppuccin Blue */
+  --button-primary-bgcolor: #89b4fa !important;
+  --button-primary-color: #1e1e2e !important;
+  --button-primary-hover-bgcolor: #74c7ec !important;
+  --button-primary-active-bgcolor: #b4befe !important;
+
+  /* Secondary button */
+  --button-bgcolor: #45475a !important;
+  --button-color: #cdd6f4 !important;
+  --button-hover-bgcolor: #585b70 !important;
+  --button-active-bgcolor: #6c7086 !important;
+
+  /* Text input */
+  --focus-outline-color: #89b4fa !important;
+  --input-bgcolor: #1e1e2e !important;
+  --input-color: #cdd6f4 !important;
+  --input-border-color: #585b70 !important;
+  --error-text-color: #f38ba8 !important;
+  --input-error-border-color: #f38ba8 !important;
+
+  /* Sidebar */
+  --sidebar-background-color: #313244 !important;
+  --sidebar-text-color: #cdd6f4 !important;
+  --sidebar-border-color: #585b70 !important;
+
+  /* Dialog backdrop */
+  & #window-modal-dialog::backdrop {
+    background-color: rgb(17 17 27 / .5) !important;
+  }
+
+  &[dialogroot] {
+    --in-content-page-background: var(--arrowpanel-background) !important;
+    --in-content-page-color: var(--arrowpanel-color) !important;
+    --in-content-primary-button-text-color: var(--button-primary-color) !important;
+    --in-content-primary-button-background: var(--button-primary-bgcolor) !important;
+    --in-content-primary-button-background-hover: var(--button-primary-hover-bgcolor) !important;
+    --in-content-primary-button-background-active: var(--button-primary-active-bgcolor) !important;
+    --in-content-button-text-color: var(--button-color) !important;
+    --in-content-button-background: var(--button-bgcolor) !important;
+    --in-content-button-background-hover: var(--button-hover-bgcolor) !important;
+    --in-content-button-background-active: var(--button-active-bgcolor) !important;
+    --in-content-box-background: var(--input-bgcolor) !important;
+    --in-content-box-border-color: var(--input-border-color) !important;
+  }
+
+  accent-color: #89b4fa !important;
+}
+
+/* Windows-specific Catppuccin overrides */
+@media (-moz-platform: windows) {
+  ::selection {
+    background-color: #89b4fa !important;
+    color: #1e1e2e !important;
+  }
+
+  tooltip {
+    background-color: #313244 !important;
+    color: #cdd6f4 !important;
+    border-color: #45475a !important;
+  }
+
+  .titlebar-button:not(.titlebar-close):hover {
+    background-color: color-mix(in srgb, #cdd6f4 11%, transparent) !important;
+
+    &:active {
+      background-color: color-mix(in srgb, #cdd6f4 20%, transparent) !important;
+    }
+  }
+
+  .titlebar-close:hover {
+    stroke: #cdd6f4 !important;
+    background-color: #f38ba8 !important;
+
+    &:active {
+      background-color: #eba0ac !important;
+    }
+  }
+
+  /* Library window */
+  window#places {
+    --organizer-color: #cdd6f4 !important;
+    --organizer-deemphasized-color: #a6adc8 !important;
+    --organizer-toolbar-background: #313244 !important;
+    --organizer-pane-background: #1e1e2e !important;
+    --organizer-content-background: #11111b !important;
+    --organizer-hover-background: #45475a !important;
+    --organizer-selected-background: color-mix(in srgb, #89b4fa 40%, transparent) !important;
+    --organizer-outline-color: #89b4fa !important;
+    --organizer-toolbar-field-background: #1e1e2e !important;
+    --organizer-toolbar-field-background-focused: #1e1e2e !important;
+    --organizer-border-color: #585b70 !important;
+    scrollbar-color: #585b70 #1e1e2e40 !important;
+  }
+
+  #placesViewsBox #downloadsListBox richlistitem[selected="true"] {
+    background-color: #89b4fa !important;
+    color: #1e1e2e !important;
+  }
+}
+
+/* Status/link preview panel */
+#statuspanel-label {
+  background-color: #1e1e2e !important;
+  color: #cdd6f4 !important;
+  border-color: transparent !important;
+  box-shadow: 0 2px 5px #11111b80, 0 0 0 1px #11111b40 !important;
+}
+
+/* Sidebar panel colors */
+.sidebar-panel:not([lwt-sidebar]) {
+  color: #cdd6f4 !important;
+  scrollbar-color: #585b70 #313244 !important;
+}
+
+/* Scrollbar theming */
+:root:not([lwtheme]) {
+  scrollbar-color: #585b70 #1e1e2e !important;
+}
+
+/* PiP (Picture-in-Picture) enhancements */
+#picture-in-picture-toggle-box {
+  background-color: #313244 !important;
+  border-radius: 8px !important;
+}
+
+/* Loading throbber - Catppuccin Blue accent */
+.tab-throbber[busy]::before {
+  fill: #89b4fa !important;
+}
+.tab-throbber[progress]::before {
+  fill: #a6e3a1 !important;
+}
