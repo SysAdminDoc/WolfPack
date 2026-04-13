@@ -1,0 +1,4 @@
+optparse
+PyYAML
+vsdownload
+zstandard
