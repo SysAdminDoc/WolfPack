@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "artifacts": {
+    "stable": {
+      "x86_64": {
+        "version": "146.0.1-1",
+        "fileName": "librewolf-146.0.1-1-windows-x86_64-portable.zip",
+        "sha256": "f251cfb6a80bc4d5128ace2dcb2582dca0f7e993ca1ea5a23727649910d5dca0"
+      }
+    }
+  }
+}

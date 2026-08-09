@@ -51,6 +51,7 @@ jobs:
             $version = $env:RELEASE_VERSION
           }
           $args = @('-Channel', '${{ matrix.channel }}', '-Arch', '${{ matrix.arch }}')
+          $args += '-RequireLock'
           if ($version) { $args += @('-Version', $version) }
           .\build-portable.ps1 @args
 

@@ -4,6 +4,7 @@
 
 ### Build System
 - Added stable and beta LibreWolf channels with isolated beta artifacts and a GitHub Actions matrix build.
+- Added a SHA-256 locked LibreWolf archive manifest with CI enforcement.
 
 ## v1.4.0 (2026-03-15)
 

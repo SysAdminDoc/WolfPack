@@ -89,6 +89,9 @@ Google is the default. Also available: DuckDuckGo, DuckDuckGo Lite, SearXNG, Sta
 # Build everything (downloads latest LibreWolf automatically)
 .\build-portable.ps1
 
+# Build the beta channel (requires an upstream beta artifact/version)
+.\build-portable.ps1 -Channel beta
+
 # Build specific version
 .\build-portable.ps1 -Version "146.0.1-1"
 
@@ -102,6 +105,8 @@ Google is the default. Also available: DuckDuckGo, DuckDuckGo Lite, SearXNG, Sta
 ### Output
 - `output/WolfPack-<version>-portable.zip`
 - `output/WolfPack-<version>-setup.exe`
+
+The build verifies the downloaded LibreWolf archive against `librewolf.lock`. CI builds fail when the version or SHA-256 hash differs; intentional local experiments can use `-AllowUnpinned`.
 
 ## Project Structure
 

@@ -10,7 +10,9 @@ param(
     [string]$Channel = "stable",
     [switch]$SkipDownload,
     [switch]$PortableOnly,
-    [switch]$InstallerOnly
+    [switch]$InstallerOnly,
+    [switch]$RequireLock,
+    [switch]$AllowUnpinned
 )
 
 $ErrorActionPreference = "Stop"
@@ -18,14 +20,63 @@ $ProjectName = "WolfPack"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $BuildDir = Join-Path $ScriptDir "build"
 $OutputDir = Join-Path $ScriptDir "output"
+$LockPath = Join-Path $ScriptDir "librewolf.lock"
 $GitLabProjectId = "44042130"
 $GitLabApiBase = "https://gitlab.com/api/v4/projects/$GitLabProjectId"
+$EnforceLock = ($RequireLock.IsPresent -or ($env:CI -eq "true")) -and -not $AllowUnpinned.IsPresent
 
 # ---- Functions ----
 
 function Write-Status($msg) { Write-Host "[*] $msg" -ForegroundColor Cyan }
 function Write-Success($msg) { Write-Host "[+] $msg" -ForegroundColor Green }
 function Write-Warn($msg) { Write-Host "[!] $msg" -ForegroundColor Yellow }
+
+function Get-LockEntry($channel, $arch) {
+    if (-not (Test-Path -LiteralPath $LockPath)) {
+        if ($EnforceLock) {
+            throw "LibreWolf lock file not found: $LockPath"
+        }
+        Write-Warn "LibreWolf lock file not found; archive integrity checks are disabled"
+        return $null
+    }
+
+    try {
+        $lock = Get-Content -LiteralPath $LockPath -Raw | ConvertFrom-Json
+    } catch {
+        throw "Could not parse LibreWolf lock file '$LockPath': $($_.Exception.Message)"
+    }
+
+    $entry = $lock.artifacts.$channel.$arch
+    if (-not $entry) {
+        if ($EnforceLock) {
+            throw "No locked LibreWolf archive exists for channel '$channel' and architecture '$arch' in $LockPath"
+        }
+        Write-Warn "No locked LibreWolf archive exists for channel '$channel' and architecture '$arch'"
+    }
+
+    return $entry
+}
+
+function Assert-LibreWolfArchive($zipPath, $version, $channel, $arch) {
+    $entry = Get-LockEntry $channel $arch
+    if (-not $entry) { return }
+
+    if ([string]$entry.version -ne $version) {
+        throw "LibreWolf $channel/$arch version '$version' is not locked; expected '$($entry.version)'. Update librewolf.lock before building."
+    }
+
+    $expectedHash = ([string]$entry.sha256).Trim().ToLowerInvariant()
+    if ($expectedHash -notmatch '^[0-9a-f]{64}$') {
+        throw "Invalid SHA-256 value for LibreWolf $channel/$arch in $LockPath"
+    }
+
+    $actualHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $zipPath).Hash.ToLowerInvariant()
+    if ($actualHash -ne $expectedHash) {
+        throw "LibreWolf archive hash mismatch for $zipPath. Expected $expectedHash but downloaded $actualHash."
+    }
+
+    Write-Success "Verified LibreWolf archive SHA-256: $actualHash"
+}
 
 function Get-LatestVersion($channel) {
     Write-Status "Fetching latest LibreWolf $channel release version..."
@@ -557,6 +608,7 @@ $channelSuffix = if ($Channel -eq "stable") { "" } else { "-$Channel" }
 $extractDir = Join-Path $BuildDir "portable$channelSuffix-$Version"
 if (-not $SkipDownload) {
     $zipFile = Download-LibreWolf $Version $Arch
+    Assert-LibreWolfArchive $zipFile $Version $Channel $Arch
     Extract-LibreWolf $zipFile $extractDir
 } else {
     if (-not (Test-Path $extractDir)) {
