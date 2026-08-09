@@ -1,0 +1,76 @@
+name: Build WolfPack
+
+on:
+  workflow_dispatch:
+    inputs:
+      stable_version:
+        description: 'LibreWolf stable version (leave empty for latest)'
+        required: false
+        default: ''
+      beta_version:
+        description: 'LibreWolf beta version (leave empty for the latest published beta)'
+        required: false
+        default: ''
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - channel: stable
+            arch: x86_64
+          - channel: beta
+            arch: x86_64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install NSIS
+        shell: pwsh
+        run: |
+          choco install nsis --yes --no-progress
+          "C:\Program Files (x86)\NSIS" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Build ${{ matrix.channel }} channel
+        shell: pwsh
+        env:
+          STABLE_VERSION: ${{ inputs.stable_version }}
+          BETA_VERSION: ${{ inputs.beta_version }}
+          RELEASE_VERSION: ${{ github.event.release.tag_name }}
+        run: |
+          $version = if ('${{ matrix.channel }}' -eq 'stable') { $env:STABLE_VERSION } else { $env:BETA_VERSION }
+          if (-not $version -and '${{ github.event_name }}' -eq 'release' -and '${{ matrix.channel }}' -eq 'stable') {
+            $version = $env:RELEASE_VERSION
+          }
+          $args = @('-Channel', '${{ matrix.channel }}', '-Arch', '${{ matrix.arch }}')
+          if ($version) { $args += @('-Version', $version) }
+          .\build-portable.ps1 @args
+
+      - name: Upload portable package
+        uses: actions/upload-artifact@v4
+        with:
+          name: WolfPack-${{ matrix.channel }}-portable
+          path: output/*-portable.zip
+          if-no-files-found: error
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: WolfPack-${{ matrix.channel }}-setup
+          path: output/*-setup.exe
+          if-no-files-found: error
+
+      - name: Upload stable release assets
+        if: github.event_name == 'release' && matrix.channel == 'stable'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ github.event.release.tag_name }}" output/* --clobber

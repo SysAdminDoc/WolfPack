@@ -1,11 +1,13 @@
 # =============================================================================
 # WolfPack - Build Script v1.4.0
-# Downloads latest LibreWolf, injects custom config, packages portable + installer
+# Downloads LibreWolf from the selected channel, injects custom config, packages portable + installer
 # =============================================================================
 
 param(
     [string]$Version = "",
     [string]$Arch = "x86_64",
+    [ValidateSet("stable", "beta")]
+    [string]$Channel = "stable",
     [switch]$SkipDownload,
     [switch]$PortableOnly,
     [switch]$InstallerOnly
@@ -25,11 +27,33 @@ function Write-Status($msg) { Write-Host "[*] $msg" -ForegroundColor Cyan }
 function Write-Success($msg) { Write-Host "[+] $msg" -ForegroundColor Green }
 function Write-Warn($msg) { Write-Host "[!] $msg" -ForegroundColor Yellow }
 
-function Get-LatestVersion {
-    Write-Status "Fetching latest LibreWolf release version..."
-    $release = Invoke-RestMethod -Uri "$GitLabApiBase/releases/permalink/latest" -UseBasicParsing
-    $tag = $release.tag_name
-    Write-Success "Latest version: $tag"
+function Get-LatestVersion($channel) {
+    Write-Status "Fetching latest LibreWolf $channel release version..."
+
+    if ($channel -eq "stable") {
+        $release = Invoke-RestMethod -Uri "$GitLabApiBase/releases/permalink/latest" -UseBasicParsing
+        $tag = $release.tag_name
+    } else {
+        $releases = Invoke-RestMethod -Uri "$GitLabApiBase/releases?per_page=100&order_by=released_at&sort=desc" -UseBasicParsing
+        $release = $releases |
+            Where-Object {
+                $_.tag_name -match '(?i)(beta|b\d+(?:[-.]|$))' -or
+                $_.name -match '(?i)(beta|b\d+(?:[-.]|$))'
+            } |
+            Select-Object -First 1
+
+        if (-not $release) {
+            throw "No LibreWolf beta release is currently published by the upstream GitLab project. Pass -Version with an available beta artifact or wait for the next beta release."
+        }
+
+        $tag = $release.tag_name
+    }
+
+    if ([string]::IsNullOrWhiteSpace($tag)) {
+        throw "LibreWolf returned an empty version for the $channel channel."
+    }
+
+    Write-Success "Latest $channel version: $tag"
     return $tag
 }
 
@@ -457,11 +481,12 @@ Start-Process -FilePath $lwExe -ArgumentList "--profile `"$profileDir`" --no-rem
     Write-Success "  Created portable launchers"
 }
 
-function Build-PortableZip($lwRoot, $version) {
+function Build-PortableZip($lwRoot, $version, $channel) {
     Write-Status "Packaging portable zip..."
     New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
 
-    $zipName = "$ProjectName-$version-portable.zip"
+    $channelSuffix = if ($channel -eq "stable") { "" } else { "-$channel" }
+    $zipName = "$ProjectName$channelSuffix-$version-portable.zip"
     $zipPath = Join-Path $OutputDir $zipName
 
     if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
@@ -472,7 +497,7 @@ function Build-PortableZip($lwRoot, $version) {
     return $zipPath
 }
 
-function Build-NsisInstaller($lwRoot, $version) {
+function Build-NsisInstaller($lwRoot, $version, $channel) {
     $nsisScript = Join-Path $ScriptDir "installer.nsi"
     if (-not (Test-Path $nsisScript)) {
         Write-Warn "installer.nsi not found, skipping installer build"
@@ -498,7 +523,8 @@ function Build-NsisInstaller($lwRoot, $version) {
     Write-Status "Building NSIS installer..."
     New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
 
-    $exeName = "$ProjectName-$version-setup.exe"
+    $channelSuffix = if ($channel -eq "stable") { "" } else { "-$channel" }
+    $exeName = "$ProjectName$channelSuffix-$version-setup.exe"
     $exePath = Join-Path $OutputDir $exeName
 
     & $makensis /DVERSION="$version" /DSOURCE_DIR="$lwRoot" /DOUTPUT_FILE="$exePath" "$nsisScript"
@@ -523,11 +549,12 @@ Write-Host ""
 
 # Get version
 if (-not $Version) {
-    $Version = Get-LatestVersion
+    $Version = Get-LatestVersion $Channel
 }
 
 # Download
-$extractDir = Join-Path $BuildDir "portable-$Version"
+$channelSuffix = if ($Channel -eq "stable") { "" } else { "-$Channel" }
+$extractDir = Join-Path $BuildDir "portable$channelSuffix-$Version"
 if (-not $SkipDownload) {
     $zipFile = Download-LibreWolf $Version $Arch
     Extract-LibreWolf $zipFile $extractDir
@@ -546,10 +573,10 @@ Build-PortableLauncher $extractDir $paths.AppDir
 # Build outputs
 Write-Host ""
 if (-not $InstallerOnly) {
-    $portableZip = Build-PortableZip $extractDir $Version
+    $portableZip = Build-PortableZip $extractDir $Version $Channel
 }
 if (-not $PortableOnly) {
-    $installerExe = Build-NsisInstaller $extractDir $Version
+    $installerExe = Build-NsisInstaller $extractDir $Version $Channel
 }
 
 # Summary
@@ -558,6 +585,7 @@ Write-Host "=============================================" -ForegroundColor Gree
 Write-Host "  Build Complete" -ForegroundColor Green
 Write-Host "=============================================" -ForegroundColor Green
 Write-Host "  Version:   $Version" -ForegroundColor White
+Write-Host "  Channel:   $Channel" -ForegroundColor White
 Write-Host "  Arch:      $Arch" -ForegroundColor White
 if ($portableZip) { Write-Host "  Portable:  $portableZip" -ForegroundColor White }
 if ($installerExe) { Write-Host "  Installer: $installerExe" -ForegroundColor White }
