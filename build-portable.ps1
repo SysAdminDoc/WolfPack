@@ -590,6 +590,105 @@ function Build-NsisInstaller($lwRoot, $version, $channel) {
     }
 }
 
+function Build-MsixPackage($lwRoot, $version, $channel, $arch) {
+    $manifestTemplate = Join-Path $ScriptDir "installer\AppxManifest.xml"
+    if (-not (Test-Path -LiteralPath $manifestTemplate)) {
+        Write-Warn "installer\AppxManifest.xml not found. Skipping MSIX build."
+        return $null
+    }
+
+    $makeAppx = Get-Command makeappx -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
+    if (-not $makeAppx) {
+        $kitRoots = @(
+            "${env:ProgramFiles(x86)}\Windows Kits\10\bin",
+            "$env:ProgramFiles\Windows Kits\10\bin"
+        ) | Where-Object { $_ -and (Test-Path -LiteralPath $_) }
+        $makeAppx = $kitRoots |
+            ForEach-Object { Get-ChildItem -LiteralPath $_ -Filter "makeappx.exe" -Recurse -ErrorAction SilentlyContinue } |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1 -ExpandProperty FullName
+    }
+
+    if (-not $makeAppx) {
+        Write-Warn "MakeAppx.exe not found. Install the Windows 10/11 SDK to build the MSIX package."
+        return $null
+    }
+
+    $launcherPath = Join-Path $lwRoot "WolfPack.exe"
+    if (-not (Test-Path -LiteralPath $launcherPath)) {
+        throw "MSIX packaging requires the compiled WolfPack.exe launcher."
+    }
+
+    $processorArch = switch ($arch) {
+        "x86_64" { "x64" }
+        "i686" { "x86" }
+        "arm64" { "arm64" }
+        default { throw "Unsupported MSIX architecture: $arch" }
+    }
+
+    $versionFile = Join-Path $ScriptDir "version.txt"
+    $packageVersion = if (Test-Path -LiteralPath $versionFile) {
+        (Get-Content -LiteralPath $versionFile -Raw).Trim()
+    } else {
+        "0.0.0"
+    }
+    $versionParts = @($packageVersion -split '\.' | ForEach-Object { if ($_ -match '^\d+$') { [int]$_ } else { 0 } })
+    while ($versionParts.Count -lt 4) { $versionParts += 0 }
+    $packageVersion = ($versionParts[0..3] -join '.')
+
+    $channelSuffix = if ($channel -eq "stable") { "" } else { "-$channel" }
+    $msixStage = Join-Path $BuildDir "msix$channelSuffix-$version"
+    $msixName = "$ProjectName$channelSuffix-$version.msix"
+    $msixPath = Join-Path $OutputDir $msixName
+
+    Write-Status "Building MSIX package..."
+    if (Test-Path -LiteralPath $msixStage) { Remove-Item -LiteralPath $msixStage -Recurse -Force }
+    New-Item -ItemType Directory -Path $msixStage -Force | Out-Null
+    Copy-Item (Join-Path $lwRoot "*") $msixStage -Recurse -Force
+
+    $manifest = Get-Content -LiteralPath $manifestTemplate -Raw
+    $manifest = $manifest.Replace("__PACKAGE_VERSION__", $packageVersion)
+    $manifest = $manifest.Replace("__PROCESSOR_ARCHITECTURE__", $processorArch)
+    Set-Content -LiteralPath (Join-Path $msixStage "AppxManifest.xml") -Value $manifest -Encoding UTF8 -NoNewline
+
+    $logoSource = Join-Path $ScriptDir "assets\wolfpack-logo.png"
+    if (-not (Test-Path -LiteralPath $logoSource)) {
+        throw "MSIX packaging requires assets\wolfpack-logo.png."
+    }
+
+    $msixAssets = Join-Path $msixStage "Assets"
+    New-Item -ItemType Directory -Path $msixAssets -Force | Out-Null
+    Add-Type -AssemblyName System.Drawing
+    $sourceImage = [System.Drawing.Image]::FromFile((Resolve-Path $logoSource).Path)
+    try {
+        foreach ($size in @(44, 150, "Store")) {
+            $pixelSize = if ($size -eq "Store") { 50 } else { [int]$size }
+            $fileName = if ($size -eq "Store") { "StoreLogo.png" } else { "Square${size}x${size}Logo.png" }
+            $bitmap = New-Object System.Drawing.Bitmap $pixelSize, $pixelSize
+            $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+            $graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+            $graphics.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::HighQuality
+            $graphics.Clear([System.Drawing.Color]::Transparent)
+            $graphics.DrawImage($sourceImage, 0, 0, $pixelSize, $pixelSize)
+            $graphics.Dispose()
+            $bitmap.Save((Join-Path $msixAssets $fileName), [System.Drawing.Imaging.ImageFormat]::Png)
+            $bitmap.Dispose()
+        }
+    } finally {
+        $sourceImage.Dispose()
+    }
+
+    if (Test-Path -LiteralPath $msixPath) { Remove-Item -LiteralPath $msixPath -Force }
+    & $makeAppx pack /d $msixStage /p $msixPath /o
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $msixPath)) {
+        throw "MSIX packaging failed with exit code $LASTEXITCODE."
+    }
+
+    $size = [math]::Round((Get-Item -LiteralPath $msixPath).Length / 1MB, 1)
+    Write-Success "MSIX: $msixName ($size MB)"
+    return $msixPath
+}
+
 # ---- Main ----
 
 Write-Host ""
@@ -629,6 +728,7 @@ if (-not $InstallerOnly) {
 }
 if (-not $PortableOnly) {
     $installerExe = Build-NsisInstaller $extractDir $Version $Channel
+    $msixPackage = Build-MsixPackage $extractDir $Version $Channel $Arch
 }
 
 # Summary
@@ -641,4 +741,5 @@ Write-Host "  Channel:   $Channel" -ForegroundColor White
 Write-Host "  Arch:      $Arch" -ForegroundColor White
 if ($portableZip) { Write-Host "  Portable:  $portableZip" -ForegroundColor White }
 if ($installerExe) { Write-Host "  Installer: $installerExe" -ForegroundColor White }
+if ($msixPackage) { Write-Host "  MSIX:      $msixPackage" -ForegroundColor White }
 Write-Host ""

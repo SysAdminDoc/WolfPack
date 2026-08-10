@@ -38,6 +38,7 @@ All telemetry, Mozilla promotions, Pocket, Firefox Sync, safe browsing, and othe
 |------|-------------|
 | `WolfPack-<version>-setup.exe` | Windows installer (Start Menu + Desktop shortcuts, Add/Remove Programs) |
 | `WolfPack-<version>-portable.zip` | Portable zip (extract anywhere and run `WolfPack.exe`) |
+| `WolfPack-<version>.msix` | MSIX package for enterprise deployment (requires signing before end-user installation) |
 
 Download from the [Releases](https://github.com/SysAdminDoc/WolfPack/releases) page.
 
@@ -81,6 +82,7 @@ Google is the default. Also available: DuckDuckGo, DuckDuckGo Lite, SearXNG, Sta
 - Windows 10/11
 - PowerShell 5.1+
 - [NSIS](https://nsis.sourceforge.io/) (for installer builds)
+- Windows 10/11 SDK (for MSIX builds)
 - .NET Framework 4.x (for launcher compilation)
 
 ### Build Commands
@@ -105,6 +107,7 @@ Google is the default. Also available: DuckDuckGo, DuckDuckGo Lite, SearXNG, Sta
 ### Output
 - `output/WolfPack-<version>-portable.zip`
 - `output/WolfPack-<version>-setup.exe`
+- `output/WolfPack-<version>.msix`
 
 The build verifies the downloaded LibreWolf archive against `librewolf.lock`. CI builds fail when the version or SHA-256 hash differs; intentional local experiments can use `-AllowUnpinned`.
 

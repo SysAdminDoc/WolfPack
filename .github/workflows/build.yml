@@ -69,6 +69,13 @@ jobs:
           path: output/*-setup.exe
           if-no-files-found: error
 
+      - name: Upload MSIX package
+        uses: actions/upload-artifact@v4
+        with:
+          name: WolfPack-${{ matrix.channel }}-msix
+          path: output/*.msix
+          if-no-files-found: error
+
       - name: Upload stable release assets
         if: github.event_name == 'release' && matrix.channel == 'stable'
         shell: pwsh
