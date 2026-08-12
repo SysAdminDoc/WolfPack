@@ -38,8 +38,6 @@
                 "eBay",
                 "Twitter"
             ],
-            "Default": "Google",
-            "DefaultPrivate": "Google",
             "Add": [
                 {
                     "Name": "DuckDuckGo",

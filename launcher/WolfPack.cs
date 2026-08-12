@@ -1,11 +1,32 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Collections.Generic;
 
 namespace WolfPack
 {
     class Program
     {
+        private static void ShowError(string message)
+        {
+            System.Windows.Forms.MessageBox.Show(
+                message,
+                "WolfPack",
+                System.Windows.Forms.MessageBoxButtons.OK,
+                System.Windows.Forms.MessageBoxIcon.Error);
+        }
+
+        private static string QuoteArgument(string value)
+        {
+            if (value == null)
+                return "\"\"";
+
+            if (value.Length > 0 && value.IndexOfAny(new char[] { ' ', '\t', '\"' }) < 0)
+                return value;
+
+            return "\"" + value.Replace("\"", "\\\"") + "\"";
+        }
+
         static void Main(string[] args)
         {
             string exeDir = Path.GetDirectoryName(
@@ -31,32 +52,56 @@ namespace WolfPack
 
             if (lwExe == null)
             {
-                System.Windows.Forms.MessageBox.Show(
+                ShowError(
                     "Could not find librewolf.exe.\n\nExpected locations:\n" +
-                    string.Join("\n", searchPaths),
-                    "WolfPack",
-                    System.Windows.Forms.MessageBoxButtons.OK,
-                    System.Windows.Forms.MessageBoxIcon.Error);
+                    string.Join("\n", searchPaths));
                 return;
             }
 
             // Profile directory
             string profileDir = Path.Combine(exeDir, "Profiles", "Default");
-            if (!Directory.Exists(profileDir))
-                Directory.CreateDirectory(profileDir);
+            int passthroughStart = 0;
+            try
+            {
+                if (args.Length > 0 &&
+                    string.Equals(args[0], "--profile-override", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (args.Length < 2 || string.IsNullOrWhiteSpace(args[1]))
+                    {
+                        ShowError("--profile-override requires a profile directory path.");
+                        return;
+                    }
+
+                    profileDir = Path.GetFullPath(args[1]);
+                    passthroughStart = 2;
+                }
+
+                if (!Directory.Exists(profileDir))
+                    Directory.CreateDirectory(profileDir);
+            }
+            catch (Exception ex)
+            {
+                ShowError("Could not prepare the WolfPack profile:\n" + ex.Message);
+                return;
+            }
 
             // Build arguments
-            string arguments = "--profile \"" + profileDir + "\" --no-remote";
+            List<string> launchArguments = new List<string>
+            {
+                "--profile",
+                QuoteArgument(profileDir),
+                "--no-remote"
+            };
 
             // Pass through any command-line arguments (e.g. URLs)
-            if (args.Length > 0)
-                arguments += " " + string.Join(" ", args);
+            for (int i = passthroughStart; i < args.Length; i++)
+                launchArguments.Add(QuoteArgument(args[i]));
 
             // Launch
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = lwExe,
-                Arguments = arguments,
+                Arguments = string.Join(" ", launchArguments),
                 UseShellExecute = false,
                 WorkingDirectory = Path.GetDirectoryName(lwExe)
             };
@@ -67,11 +112,7 @@ namespace WolfPack
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show(
-                    "Failed to launch WolfPack:\n" + ex.Message,
-                    "WolfPack",
-                    System.Windows.Forms.MessageBoxButtons.OK,
-                    System.Windows.Forms.MessageBoxIcon.Error);
+                ShowError("Failed to launch WolfPack:\n" + ex.Message);
             }
         }
     }

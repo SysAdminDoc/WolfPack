@@ -14,8 +14,8 @@ user_pref("general.config.obscure_value", 0);
 // Default engine is set via policies.json SearchEngines.Default
 // =============================================================================
 user_pref("browser.search.update", false);
-user_pref("browser.urlbar.placeholderName", "Google");
-user_pref("browser.urlbar.placeholderName.private", "Google");
+user_pref("browser.urlbar.placeholderName", "Search");
+user_pref("browser.urlbar.placeholderName.private", "Search");
 user_pref("browser.search.suggest.enabled", true);
 user_pref("browser.urlbar.suggest.searches", true);
 

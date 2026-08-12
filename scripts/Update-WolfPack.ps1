@@ -126,6 +126,42 @@ foreach ($item in $rootItems) {
     }
 }
 
+# Refresh the managed defaults while preserving the user's separate override file.
+# The profile itself is intentionally not replaced: it contains bookmarks, cookies,
+# extension state, and other user data.
+$currentProfileDir = Join-Path $WolfPackRoot "Profiles\Default"
+$updateProfileDir = Join-Path (Split-Path $updateAppDir) "Profiles\Default"
+if (-not (Test-Path -LiteralPath $currentProfileDir)) {
+    New-Item -ItemType Directory -Path $currentProfileDir -Force | Out-Null
+}
+
+$overridePath = Join-Path $currentProfileDir "user-overrides.js"
+$overrideText = if (Test-Path -LiteralPath $overridePath) {
+    Get-Content -LiteralPath $overridePath -Raw
+} else {
+    ""
+}
+
+$updatedUserJs = Join-Path $updateProfileDir "user.js"
+if (Test-Path -LiteralPath $updatedUserJs) {
+    Copy-Item -LiteralPath $updatedUserJs -Destination (Join-Path $currentProfileDir "user.js") -Force
+}
+
+$updatedOverride = Join-Path $updateProfileDir "user-overrides.js"
+if ([string]::IsNullOrWhiteSpace($overrideText) -and (Test-Path -LiteralPath $updatedOverride)) {
+    Copy-Item -LiteralPath $updatedOverride -Destination $overridePath -Force
+    $overrideText = Get-Content -LiteralPath $overridePath -Raw
+}
+
+if (-not [string]::IsNullOrWhiteSpace($overrideText)) {
+    $managedUserJs = Join-Path $currentProfileDir "user.js"
+    if (Test-Path -LiteralPath $managedUserJs) {
+        $managedText = Get-Content -LiteralPath $managedUserJs -Raw
+        $managedText += "`r`n`r`n// WolfPack user-overrides.js (preserved across updates)`r`n$overrideText"
+        Set-Content -LiteralPath $managedUserJs -Value $managedText -Encoding UTF8 -NoNewline
+    }
+}
+
 # Update version file
 Set-Content -Path $CurrentVersionFile -Value $latestVersion -Encoding UTF8
 

@@ -1,5 +1,5 @@
 # =============================================================================
-# WolfPack - Build Script v1.4.0
+# WolfPack - Build Script v1.5.0
 # Downloads LibreWolf from the selected channel, injects custom config, packages portable + installer
 # =============================================================================
 
@@ -12,7 +12,8 @@ param(
     [switch]$PortableOnly,
     [switch]$InstallerOnly,
     [switch]$RequireLock,
-    [switch]$AllowUnpinned
+    [switch]$AllowUnpinned,
+    [string]$Locale = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -21,15 +22,105 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $BuildDir = Join-Path $ScriptDir "build"
 $OutputDir = Join-Path $ScriptDir "output"
 $LockPath = Join-Path $ScriptDir "librewolf.lock"
+$ConfigPath = Join-Path $ScriptDir "wolfpack.cfg"
 $GitLabProjectId = "44042130"
 $GitLabApiBase = "https://gitlab.com/api/v4/projects/$GitLabProjectId"
 $EnforceLock = ($RequireLock.IsPresent -or ($env:CI -eq "true")) -and -not $AllowUnpinned.IsPresent
+$WolfPackConfig = $null
 
 # ---- Functions ----
 
 function Write-Status($msg) { Write-Host "[*] $msg" -ForegroundColor Cyan }
 function Write-Success($msg) { Write-Host "[+] $msg" -ForegroundColor Green }
 function Write-Warn($msg) { Write-Host "[!] $msg" -ForegroundColor Yellow }
+
+function Get-LocaleRegion($requestedLocale) {
+    $candidate = $requestedLocale
+    if ([string]::IsNullOrWhiteSpace($candidate)) {
+        try { $candidate = (Get-Culture).Name } catch { $candidate = "" }
+    }
+
+    if ($candidate -match '(?i)(?:-|_)([a-z]{2})$') {
+        return $Matches[1].ToUpperInvariant()
+    }
+    if ($candidate -match '^[a-z]{2}$') {
+        return $candidate.ToUpperInvariant()
+    }
+
+    return "US"
+}
+
+function Get-SearchEngineForRegion($region) {
+    $configured = [string]$WolfPackConfig.search.regionDefaults.$region
+    if (-not [string]::IsNullOrWhiteSpace($configured)) {
+        return $configured
+    }
+    return [string]$WolfPackConfig.search.fallback
+}
+
+function Get-GeneratedUserJs($searchEngine) {
+    $userJs = Get-Content -LiteralPath (Join-Path $ScriptDir "user.js") -Raw
+    $placeholder = 'user_pref("browser.urlbar.placeholderName", "' + $searchEngine + '");'
+    $privatePlaceholder = 'user_pref("browser.urlbar.placeholderName.private", "' + $searchEngine + '");'
+    $userJs = $userJs.Replace('user_pref("browser.urlbar.placeholderName", "Search");', $placeholder)
+    $userJs = $userJs.Replace('user_pref("browser.urlbar.placeholderName.private", "Search");', $privatePlaceholder)
+    return $userJs
+}
+
+function Get-ConfiguredPolicies($searchEngine) {
+    $policies = Get-Content -LiteralPath (Join-Path $ScriptDir "policies.json") -Raw | ConvertFrom-Json
+    if ($null -eq $policies.policies.SearchEngines.PSObject.Properties["Default"]) {
+        $policies.policies.SearchEngines | Add-Member -NotePropertyName "Default" -NotePropertyValue $searchEngine
+    } else {
+        $policies.policies.SearchEngines.Default = $searchEngine
+    }
+    if ($null -eq $policies.policies.SearchEngines.PSObject.Properties["DefaultPrivate"]) {
+        $policies.policies.SearchEngines | Add-Member -NotePropertyName "DefaultPrivate" -NotePropertyValue $searchEngine
+    } else {
+        $policies.policies.SearchEngines.DefaultPrivate = $searchEngine
+    }
+    $policies.policies.Extensions.Install = @($WolfPackConfig.extensions | ForEach-Object { [string]$_.installUrl })
+    return $policies | ConvertTo-Json -Depth 20
+}
+
+function Get-ToolbarCustomizationState {
+    $placements = [ordered]@{
+        "widget-overflow-fixed-list" = @()
+        "nav-bar" = @(
+            "back-button",
+            "forward-button",
+            "stop-reload-button",
+            "urlbar-container",
+            "downloads-button",
+            "unified-extensions-button"
+        )
+        "toolbar-menubar" = @("menubar-items")
+        "PersonalToolbar" = @("personal-bookmarks")
+    }
+    foreach ($extensionId in @($WolfPackConfig.profile.autoPinExtensions)) {
+        $placements["nav-bar"] += "${extensionId}-browser-action"
+    }
+
+    $state = [ordered]@{
+        placements = $placements
+        seen = @($WolfPackConfig.profile.autoPinExtensions)
+        dirtyAreaCache = @("nav-bar")
+        currentVersion = 20
+    }
+    return ($state | ConvertTo-Json -Compress -Depth 10)
+}
+
+function Invoke-WolfPackConfigValidation {
+    $validator = Join-Path $ScriptDir "scripts\Validate-WolfPackConfig.ps1"
+    if (-not (Test-Path -LiteralPath $validator)) {
+        throw "WolfPack config validator not found: $validator"
+    }
+    & $validator -ConfigPath $ConfigPath
+    if (-not $?) {
+        throw "WolfPack config validation failed."
+    }
+    $script:WolfPackConfig = Get-Content -LiteralPath $ConfigPath -Raw | ConvertFrom-Json
+}
 
 function Get-LockEntry($channel, $arch) {
     if (-not (Test-Path -LiteralPath $LockPath)) {
@@ -238,6 +329,12 @@ function Patch-LibreWolfCfg($appDir) {
     # --- Fix weather on new tab page ---
     $cfg = $cfg -replace 'defaultPref\("browser\.newtabpage\.activity-stream\.showWeather",\s*false\)', 'defaultPref("browser.newtabpage.activity-stream.showWeather", true)'
 
+    $toolbarState = Get-ToolbarCustomizationState
+    if ($cfg -notmatch 'browser\.uiCustomization\.state') {
+        $escapedToolbarState = $toolbarState.Replace('\', '\\').Replace('"', '\"')
+        $cfg += "`n`n// WolfPack first-run toolbar defaults`ndefaultPref(`"browser.uiCustomization.state`", `"$escapedToolbarState`");`n"
+    }
+
     Set-Content -Path $cfgPath -Value $cfg -Encoding UTF8 -NoNewline
     Write-Success "  Patched librewolf.cfg (DRM, cache, search, RFP, cookies, passwords, prefetch, extensions)"
 }
@@ -251,20 +348,43 @@ function Inject-Config($lwRoot) {
     # 1. Patch librewolf.cfg to fix common issues BEFORE injecting our config
     Patch-LibreWolfCfg $appDir
 
-    # 2. Inject policies.json
+    $localeRegion = Get-LocaleRegion $Locale
+    $searchEngine = Get-SearchEngineForRegion $localeRegion
+
+    # 2. Inject policies.json with locale-aware defaults and configured extension URLs
     $distDir = Join-Path $appDir "distribution"
     New-Item -ItemType Directory -Path $distDir -Force | Out-Null
-    Copy-Item (Join-Path $ScriptDir "policies.json") (Join-Path $distDir "policies.json") -Force
-    Write-Success "  policies.json -> distribution/"
+    Set-Content -LiteralPath (Join-Path $distDir "policies.json") -Value (Get-ConfiguredPolicies $searchEngine) -Encoding UTF8 -NoNewline
+    Write-Success "  policies.json -> distribution/ (region $localeRegion, default $searchEngine)"
 
     # 3. Create portable profile directory structure
     $profilesDir = Join-Path $lwRoot "Profiles"
     $defaultProfile = Join-Path $profilesDir "Default"
     New-Item -ItemType Directory -Path $defaultProfile -Force | Out-Null
 
-    # 4. Inject user.js into the profile
-    Copy-Item (Join-Path $ScriptDir "user.js") (Join-Path $defaultProfile "user.js") -Force
-    Write-Success "  user.js -> Profiles/Default/"
+    # 4. Inject user.js and preserve the separately editable user overrides file
+    $overrideName = [string]$WolfPackConfig.profile.userOverridesFile
+    $overrideDestination = Join-Path $defaultProfile $overrideName
+    $overrideText = $null
+    if (Test-Path -LiteralPath $overrideDestination) {
+        $overrideText = Get-Content -LiteralPath $overrideDestination -Raw
+    } else {
+        $overrideSource = Join-Path $ScriptDir $overrideName
+        if (Test-Path -LiteralPath $overrideSource) {
+            Copy-Item -LiteralPath $overrideSource -Destination $overrideDestination -Force
+            $overrideText = Get-Content -LiteralPath $overrideSource -Raw
+        } else {
+            Set-Content -LiteralPath $overrideDestination -Value '// Add user_pref("name", value); entries here.' -Encoding UTF8 -NoNewline
+            $overrideText = ""
+        }
+    }
+
+    $generatedUserJs = Get-GeneratedUserJs $searchEngine
+    if (-not [string]::IsNullOrWhiteSpace($overrideText)) {
+        $generatedUserJs += "`n`n// WolfPack user-overrides.js (preserved across updates)`n$overrideText"
+    }
+    Set-Content -LiteralPath (Join-Path $defaultProfile "user.js") -Value $generatedUserJs -Encoding UTF8 -NoNewline
+    Write-Success "  user.js -> Profiles/Default/ (overrides preserved, default $searchEngine)"
 
     # 5. Remove stale search cache so policies rebuild it fresh on first launch
     $staleSearch = Join-Path $defaultProfile "search.json.mozlz4"
@@ -452,6 +572,15 @@ if exist "%SCRIPT_DIR%librewolf\librewolf.exe" (
 )
 
 set "PROFILE_DIR=%SCRIPT_DIR%Profiles\Default"
+if /I "%~1"=="--profile-override" (
+    if "%~2"=="" (
+        echo --profile-override requires a profile directory path.
+        exit /b 2
+    )
+    set "PROFILE_DIR=%~2"
+    shift
+    shift
+)
 if not exist "%PROFILE_DIR%" mkdir "%PROFILE_DIR%"
 
 start "" "%LW_EXE%" --profile "%PROFILE_DIR%" --no-remote %*
@@ -473,11 +602,22 @@ Else
 End If
 
 profileDir = scriptDir & "\Profiles\Default"
+argumentStart = 0
+If WScript.Arguments.Count >= 2 Then
+    If LCase(WScript.Arguments(0)) = "--profile-override" Then
+        profileDir = WScript.Arguments(1)
+        argumentStart = 2
+    End If
+End If
 If Not CreateObject("Scripting.FileSystemObject").FolderExists(profileDir) Then
     CreateObject("Scripting.FileSystemObject").CreateFolder(profileDir)
 End If
 
-WshShell.Run """" & lwExe & """ --profile """ & profileDir & """ --no-remote", 0, False
+launchCommand = """" & lwExe & """ --profile """ & profileDir & """ --no-remote"
+For i = argumentStart To WScript.Arguments.Count - 1
+    launchCommand = launchCommand & " """" & Replace(WScript.Arguments(i), """""", """""""") & """""
+Next
+WshShell.Run launchCommand, 0, False
 '@
     Set-Content -Path (Join-Path $lwRoot "WolfPack.vbs") -Value $launcherVbs -Encoding ASCII
 
@@ -491,8 +631,15 @@ $lwPaths = @(
 )
 $lwExe = $lwPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
 $profileDir = Join-Path $scriptDir "Profiles\Default"
+$launchArgs = @($args)
+if ($launchArgs.Count -ge 2 -and $launchArgs[0] -eq "--profile-override") {
+    $profileDir = [IO.Path]::GetFullPath($launchArgs[1])
+    if ($launchArgs.Count -gt 2) { $launchArgs = @($launchArgs[2..($launchArgs.Count - 1)]) } else { $launchArgs = @() }
+}
 if (-not (Test-Path $profileDir)) { New-Item -ItemType Directory -Path $profileDir -Force | Out-Null }
-Start-Process -FilePath $lwExe -ArgumentList "--profile `"$profileDir`" --no-remote" -WindowStyle Hidden
+$profileArgument = "`"$profileDir`""
+$argumentList = @("--profile", $profileArgument, "--no-remote") + $launchArgs
+Start-Process -FilePath $lwExe -ArgumentList $argumentList -WindowStyle Hidden
 '@
     Set-Content -Path (Join-Path $lwRoot "WolfPack.ps1") -Value $launcherPs1 -Encoding UTF8
 
@@ -690,6 +837,8 @@ function Build-MsixPackage($lwRoot, $version, $channel, $arch) {
 }
 
 # ---- Main ----
+
+Invoke-WolfPackConfigValidation
 
 Write-Host ""
 Write-Host "=============================================" -ForegroundColor Magenta
