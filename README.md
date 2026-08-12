@@ -46,8 +46,8 @@ Download from the [Releases](https://github.com/SysAdminDoc/WolfPack/releases) p
 
 | Extension | Source |
 |-----------|--------|
-| [uBlockVanced](https://github.com/SysAdminDoc/uBlockVanced) | Custom uBlock Origin fork |
-| [DarkReaderLocal](https://github.com/SysAdminDoc/DarkReaderLocal) | Custom Dark Reader fork |
+| uBlock Origin (MV2) | Verified AMO package; the [uBlockVanced](https://github.com/SysAdminDoc/uBlockVanced) CRX is retained as an audited fallback candidate |
+| Dark Reader (MV2) | Verified AMO package while the [DarkReaderLocal](https://github.com/SysAdminDoc/DarkReaderLocal) fork is unavailable |
 | [ScriptVault](https://github.com/SysAdminDoc/ScriptVault) | Custom userscript manager |
 | [StyleKit](https://github.com/SysAdminDoc/StyleKit) | Custom userstyle manager |
 | [SponsorBlock](https://addons.mozilla.org/firefox/addon/sponsorblock/) | Skip YouTube sponsors |
@@ -109,6 +109,9 @@ Google is the default. Also available: DuckDuckGo, DuckDuckGo Lite, SearXNG, Sta
 
 # Rebuild without re-downloading
 .\build-portable.ps1 -SkipDownload
+
+# Audit configured extension packages and fallback candidates online
+.\scripts\Audit-WolfPackExtensions.ps1 -Online -Strict
 ```
 
 ### Output
@@ -117,6 +120,9 @@ Google is the default. Also available: DuckDuckGo, DuckDuckGo Lite, SearXNG, Sta
 - `output/WolfPack-<version>.msix`
 
 The build verifies the downloaded LibreWolf archive against `librewolf.lock`. CI builds fail when the version or SHA-256 hash differs; intentional local experiments can use `-AllowUnpinned`.
+The extension audit reads each package's `manifest.json`, verifies its Firefox ID and
+Manifest Version, and rejects Chromium-only CRX artifacts before a fallback is promoted
+to `wolfpack.cfg`.
 
 ## Project Structure
 
