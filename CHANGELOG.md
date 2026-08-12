@@ -6,6 +6,8 @@
 - Added stable and beta LibreWolf channels with isolated beta artifacts and a GitHub Actions matrix build.
 - Added a SHA-256 locked LibreWolf archive manifest with CI enforcement.
 - Added Windows SDK-backed MSIX packaging alongside the NSIS installer.
+- Added locale-aware search defaults, preserved user overrides, toolbar pinning, and the `--profile-override` launcher option.
+- Added validated `wolfpack.cfg` and packaged GPO/ADMX templates for managed Firefox policy deployment.
 
 ## v1.4.0 (2026-03-15)
 

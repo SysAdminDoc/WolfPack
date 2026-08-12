@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<policyDefinitionResources xmlns="http://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions" revision="1.0" schemaVersion="1.0">
+  <displayName>WolfPack Administrative Templates</displayName>
+  <description>Group Policy settings for WolfPack, a managed LibreWolf distribution.</description>
+  <resources>
+    <stringTable>
+      <string id="SUPPORTED_WOLFPACK">WolfPack builds and compatible Firefox policy providers</string>
+      <string id="WolfPack">WolfPack</string>
+      <string id="Extensions_group">Extensions</string>
+      <string id="DisableAppUpdate">Disable application updates</string>
+      <string id="DisableAppUpdate_Explain">Prevents WolfPack from checking for and applying application updates. Use an external deployment process to distribute new builds.</string>
+      <string id="DisableTelemetry">Disable telemetry</string>
+      <string id="DisableTelemetry_Explain">Disables Firefox telemetry collection.</string>
+      <string id="DisableFirefoxStudies">Disable Firefox Studies</string>
+      <string id="DisableFirefoxStudies_Explain">Prevents Firefox from installing Normandy studies and experiments.</string>
+      <string id="DisablePocket">Disable Pocket</string>
+      <string id="DisablePocket_Explain">Removes Pocket integration from the browser.</string>
+      <string id="DisableFeedbackCommands">Disable feedback commands</string>
+      <string id="DisableFeedbackCommands_Explain">Prevents browser feedback commands from being used.</string>
+      <string id="DisableDeveloperTools">Disable developer tools</string>
+      <string id="DisableDeveloperTools_Explain">Disables the browser developer tools.</string>
+      <string id="DisableProfileImport">Disable profile import</string>
+      <string id="DisableProfileImport_Explain">Prevents the profile import wizard from being used.</string>
+      <string id="NoDefaultBookmarks">Do not create default bookmarks</string>
+      <string id="NoDefaultBookmarks_Explain">Prevents the default bookmark set from being created for new profiles.</string>
+      <string id="Extensions_Install">Extensions to install</string>
+      <string id="Extensions_Install_Explain">If enabled, each URL or local path in the list is installed when WolfPack starts. Changes to the list cause the extensions to be installed again.</string>
+      <string id="ExtensionSettings">Extension management JSON</string>
+      <string id="ExtensionSettings_Explain">If enabled, enter the Firefox ExtensionSettings JSON policy. This can force installation, block extensions, and control updates. See the Mozilla policy templates documentation for the schema.</string>
+    </stringTable>
+    <presentationTable>
+      <presentation id="Extensions">
+        <listBox refId="Extensions" />
+      </presentation>
+      <presentation id="ExtensionSettings">
+        <multiTextBox refId="ExtensionSettings" />
+      </presentation>
+    </presentationTable>
+  </resources>
+</policyDefinitionResources>

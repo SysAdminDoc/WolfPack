@@ -528,6 +528,18 @@ Default=1
         }
     }
 
+    # 16b. Ship the GPO templates with every build so administrators can install
+    # them from the extracted package without rebuilding WolfPack.
+    $admxSrc = Join-Path $ScriptDir "admx"
+    if (Test-Path -LiteralPath $admxSrc) {
+        $admxDest = Join-Path $lwRoot "admin-templates"
+        New-Item -ItemType Directory -Path $admxDest -Force | Out-Null
+        Get-ChildItem -LiteralPath $admxSrc | ForEach-Object {
+            Copy-Item -LiteralPath $_.FullName -Destination $admxDest -Recurse -Force
+        }
+        Write-Success "  admx/ -> admin-templates/"
+    }
+
     # 17. Copy version.txt
     $versionFile = Join-Path $ScriptDir "version.txt"
     if (Test-Path $versionFile) {

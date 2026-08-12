@@ -56,6 +56,13 @@ Download from the [Releases](https://github.com/SysAdminDoc/WolfPack/releases) p
 
 Extensions are installed automatically on first launch via `policies.json`.
 
+The extracted package also contains `admin-templates/WolfPack.admx` and the matching
+`en-US/WolfPack.adml`. Copy them to the domain Central Store (or the local
+`%WINDIR%\PolicyDefinitions` directory) to expose WolfPack settings in Group Policy.
+The templates write the standard Firefox policy registry path,
+`Software\Policies\Mozilla\Firefox`, so they can be used with managed or portable
+WolfPack deployments without rebuilding the package.
+
 ## Changes from Stock LibreWolf
 
 ### Enabled (was disabled)
@@ -134,8 +141,9 @@ WolfPack/
 2. Patches `librewolf.cfg` to fix common complaints (DRM, cache, RFP, etc.)
 3. Injects custom `policies.json` for extension auto-install and Google default
 4. Injects `user.js` with optimized preferences into the portable profile
-5. Compiles a lightweight C# launcher (`WolfPack.exe`, ~5KB)
-6. Packages as portable zip and NSIS installer
+5. Copies the GPO/ADMX templates into `admin-templates/`
+6. Compiles a lightweight C# launcher (`WolfPack.exe`, ~5KB)
+7. Packages as portable zip and NSIS installer
 
 ## License
 

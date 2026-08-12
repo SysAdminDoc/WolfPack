@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<policyDefinitions xmlns="http://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions" revision="1.0" schemaVersion="1.0">
+  <policyNamespaces>
+    <target prefix="wolfpack" namespace="WolfPack.Policies" />
+  </policyNamespaces>
+  <resources minRequiredRevision="1.0" />
+  <supportedOn>
+    <definitions>
+      <definition name="SUPPORTED_WOLFPACK" displayName="$(string.SUPPORTED_WOLFPACK)" />
+    </definitions>
+  </supportedOn>
+  <categories>
+    <category name="WolfPack" displayName="$(string.WolfPack)" />
+    <category name="Extensions" displayName="$(string.Extensions_group)">
+      <parentCategory ref="WolfPack" />
+    </category>
+  </categories>
+  <policies>
+    <policy name="DisableAppUpdate" class="Both" displayName="$(string.DisableAppUpdate)" explainText="$(string.DisableAppUpdate_Explain)" key="Software\Policies\Mozilla\Firefox" valueName="DisableAppUpdate">
+      <parentCategory ref="WolfPack" />
+      <supportedOn ref="SUPPORTED_WOLFPACK" />
+      <enabledValue><decimal value="1" /></enabledValue>
+      <disabledValue><decimal value="0" /></disabledValue>
+    </policy>
+    <policy name="DisableTelemetry" class="Both" displayName="$(string.DisableTelemetry)" explainText="$(string.DisableTelemetry_Explain)" key="Software\Policies\Mozilla\Firefox" valueName="DisableTelemetry">
+      <parentCategory ref="WolfPack" />
+      <supportedOn ref="SUPPORTED_WOLFPACK" />
+      <enabledValue><decimal value="1" /></enabledValue>
+      <disabledValue><decimal value="0" /></disabledValue>
+    </policy>
+    <policy name="DisableFirefoxStudies" class="Both" displayName="$(string.DisableFirefoxStudies)" explainText="$(string.DisableFirefoxStudies_Explain)" key="Software\Policies\Mozilla\Firefox" valueName="DisableFirefoxStudies">
+      <parentCategory ref="WolfPack" />
+      <supportedOn ref="SUPPORTED_WOLFPACK" />
+      <enabledValue><decimal value="1" /></enabledValue>
+      <disabledValue><decimal value="0" /></disabledValue>
+    </policy>
+    <policy name="DisablePocket" class="Both" displayName="$(string.DisablePocket)" explainText="$(string.DisablePocket_Explain)" key="Software\Policies\Mozilla\Firefox" valueName="DisablePocket">
+      <parentCategory ref="WolfPack" />
+      <supportedOn ref="SUPPORTED_WOLFPACK" />
+      <enabledValue><decimal value="1" /></enabledValue>
+      <disabledValue><decimal value="0" /></disabledValue>
+    </policy>
+    <policy name="DisableFeedbackCommands" class="Both" displayName="$(string.DisableFeedbackCommands)" explainText="$(string.DisableFeedbackCommands_Explain)" key="Software\Policies\Mozilla\Firefox" valueName="DisableFeedbackCommands">
+      <parentCategory ref="WolfPack" />
+      <supportedOn ref="SUPPORTED_WOLFPACK" />
+      <enabledValue><decimal value="1" /></enabledValue>
+      <disabledValue><decimal value="0" /></disabledValue>
+    </policy>
+    <policy name="DisableDeveloperTools" class="Both" displayName="$(string.DisableDeveloperTools)" explainText="$(string.DisableDeveloperTools_Explain)" key="Software\Policies\Mozilla\Firefox" valueName="DisableDeveloperTools">
+      <parentCategory ref="WolfPack" />
+      <supportedOn ref="SUPPORTED_WOLFPACK" />
+      <enabledValue><decimal value="1" /></enabledValue>
+      <disabledValue><decimal value="0" /></disabledValue>
+    </policy>
+    <policy name="DisableProfileImport" class="Both" displayName="$(string.DisableProfileImport)" explainText="$(string.DisableProfileImport_Explain)" key="Software\Policies\Mozilla\Firefox" valueName="DisableProfileImport">
+      <parentCategory ref="WolfPack" />
+      <supportedOn ref="SUPPORTED_WOLFPACK" />
+      <enabledValue><decimal value="1" /></enabledValue>
+      <disabledValue><decimal value="0" /></disabledValue>
+    </policy>
+    <policy name="NoDefaultBookmarks" class="Both" displayName="$(string.NoDefaultBookmarks)" explainText="$(string.NoDefaultBookmarks_Explain)" key="Software\Policies\Mozilla\Firefox" valueName="NoDefaultBookmarks">
+      <parentCategory ref="WolfPack" />
+      <supportedOn ref="SUPPORTED_WOLFPACK" />
+      <enabledValue><decimal value="1" /></enabledValue>
+      <disabledValue><decimal value="0" /></disabledValue>
+    </policy>
+    <policy name="Extensions_Install" class="Both" displayName="$(string.Extensions_Install)" explainText="$(string.Extensions_Install_Explain)" key="Software\Policies\Mozilla\Firefox\Extensions\Install" presentation="$(presentation.Extensions)">
+      <parentCategory ref="Extensions" />
+      <supportedOn ref="SUPPORTED_WOLFPACK" />
+      <elements>
+        <list id="Extensions" key="Software\Policies\Mozilla\Firefox\Extensions\Install" valuePrefix="" expandable="true" />
+      </elements>
+    </policy>
+    <policy name="ExtensionSettings" class="Both" displayName="$(string.ExtensionSettings)" explainText="$(string.ExtensionSettings_Explain)" key="Software\Policies\Mozilla\Firefox" presentation="$(presentation.ExtensionSettings)">
+      <parentCategory ref="Extensions" />
+      <supportedOn ref="SUPPORTED_WOLFPACK" />
+      <elements>
+        <multiText id="ExtensionSettings" valueName="ExtensionSettings" maxLength="16384" />
+      </elements>
+    </policy>
+  </policies>
+</policyDefinitions>
