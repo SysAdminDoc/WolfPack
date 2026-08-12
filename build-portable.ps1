@@ -384,6 +384,8 @@ function Install-WolfPackBrowserShim($appDir) {
     # page remains self-contained in every LibreWolf content process.
     $pagePath = Join-Path $contentDestination "wolfpack.xhtml"
     $page = Get-Content -LiteralPath $pagePath -Raw
+    $projectVersion = (Get-Content -LiteralPath (Join-Path $ScriptDir "version.txt") -Raw).Trim()
+    $page = $page.Replace("__WOLFPACK_VERSION__", $projectVersion)
     $css = Get-Content -LiteralPath (Join-Path $contentDestination "wolfpack.css") -Raw
     $page = $page.Replace(
         '<link rel="stylesheet" href="resource://wolfpack/wolfpack.css" />',

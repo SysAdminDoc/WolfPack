@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.5.0 (2026-08-12)
 
 ### Build System
 - Added stable and beta LibreWolf channels with isolated beta artifacts and a GitHub Actions matrix build.

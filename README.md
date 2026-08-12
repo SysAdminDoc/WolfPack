@@ -10,6 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/SysAdminDoc/WolfPack/releases/latest"><img src="https://img.shields.io/github/v/release/SysAdminDoc/WolfPack?style=flat-square&color=blue" alt="Latest Release"></a>
+  <img src="https://img.shields.io/badge/version-1.5.0-blue?style=flat-square" alt="WolfPack version 1.5.0">
   <a href="https://github.com/SysAdminDoc/WolfPack/releases/latest"><img src="https://img.shields.io/github/downloads/SysAdminDoc/WolfPack/total?style=flat-square&color=green" alt="Downloads"></a>
   <a href="https://github.com/SysAdminDoc/WolfPack/actions"><img src="https://img.shields.io/github/actions/workflow/status/SysAdminDoc/WolfPack/build.yml?style=flat-square" alt="Build"></a>
 </p>

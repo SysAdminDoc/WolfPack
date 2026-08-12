@@ -4,6 +4,8 @@
 
 "use strict";
 
+const WOLFPACK_VERSION = "1.5.0";
+
 async function init(aEvent) {
   if (aEvent.target != document) {
     return;
@@ -37,7 +39,7 @@ async function init(aEvent) {
 
   // Display current version number
   let versionField = document.getElementById("versionNumber");
-  versionField.innerHTML = AppConstants.MOZ_APP_VERSION_DISPLAY;
+  versionField.textContent = `${AppConstants.MOZ_APP_VERSION_DISPLAY} · WolfPack ${WOLFPACK_VERSION}`;
 
   // If pref "librewolf.aboutMenu.checkVersion" is set to true,
   // check for new version with the link given in "librewolf.aboutMenu.versionCheckGitlabUrl"

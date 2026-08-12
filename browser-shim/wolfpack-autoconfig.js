@@ -17,10 +17,6 @@
     .getService(Ci.nsIResProtocolHandler);
   resource.setSubstitution("wolfpack", io.newFileURI(wolfpackDir));
 
-  var componentManifest = appDir.clone();
-  componentManifest.append("browser");
-  componentManifest.append("components");
-  componentManifest.append("WolfPackAbout.manifest");
   var registrar = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
   var chromeManifest = appDir.clone();
   chromeManifest.append("wolfpack.manifest");
@@ -31,10 +27,6 @@
       // The about module can still use the resource substitution below.
     }
   }
-  if (componentManifest.exists()) {
-    registrar.autoRegister(componentManifest);
-  }
-
   var classId = Components.ID("{b5c51db9-82f0-4c55-9e4a-3a6cfb1bc5c1}");
   var contractId = "@mozilla.org/network/protocol/about;1?what=wolfpack";
 
