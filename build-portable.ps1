@@ -339,6 +339,97 @@ function Patch-LibreWolfCfg($appDir) {
     Write-Success "  Patched librewolf.cfg (DRM, cache, search, RFP, cookies, passwords, prefetch, extensions)"
 }
 
+function Install-WolfPackBrowserShim($appDir) {
+    $shimSource = Join-Path $ScriptDir "browser-shim"
+    $contentSource = Join-Path $shimSource "content"
+    $browserManifestSource = Join-Path $shimSource "chrome.manifest"
+    if (-not (Test-Path -LiteralPath $contentSource)) {
+        throw "WolfPack browser shim content not found: $contentSource"
+    }
+    if (-not (Test-Path -LiteralPath $browserManifestSource)) {
+        throw "WolfPack about page chrome manifest not found: $browserManifestSource"
+    }
+
+    $contentDestination = Join-Path $appDir "browser\wolfpack"
+    New-Item -ItemType Directory -Path $contentDestination -Force | Out-Null
+    foreach ($stalePath in @(
+        (Join-Path $appDir "wolfpack.manifest"),
+        (Join-Path $appDir "components\WolfPackAbout.js"),
+        (Join-Path $appDir "components\WolfPackAbout.manifest"),
+        (Join-Path $appDir "browser\components\WolfPackAbout.js"),
+        (Join-Path $appDir "browser\components\WolfPackAbout.manifest")
+    )) {
+        if (Test-Path -LiteralPath $stalePath) {
+            Remove-Item -LiteralPath $stalePath -Force
+        }
+    }
+    Get-ChildItem -LiteralPath $contentSource -File | ForEach-Object {
+        Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $contentDestination $_.Name) -Force
+    }
+    Copy-Item -LiteralPath $browserManifestSource -Destination (Join-Path $appDir "wolfpack.manifest") -Force
+
+    $extensionMetadata = @($WolfPackConfig.extensions | ForEach-Object {
+        [ordered]@{
+            id = [string]$_.id
+            name = [string]$_.name
+        }
+    }) | ConvertTo-Json -Compress -Depth 5
+    $pageScriptPath = Join-Path $contentDestination "wolfpack.js"
+    $pageScript = Get-Content -LiteralPath $pageScriptPath -Raw
+    $pageScript = $pageScript.Replace("const BUNDLED_EXTENSIONS = [];", "const BUNDLED_EXTENSIONS = $extensionMetadata;")
+    Set-Content -LiteralPath $pageScriptPath -Value $pageScript -Encoding UTF8 -NoNewline
+
+    # about: pages use a system principal, but their resource subrequests can
+    # cross process boundaries. Inline the two local assets so the settings
+    # page remains self-contained in every LibreWolf content process.
+    $pagePath = Join-Path $contentDestination "wolfpack.xhtml"
+    $page = Get-Content -LiteralPath $pagePath -Raw
+    $css = Get-Content -LiteralPath (Join-Path $contentDestination "wolfpack.css") -Raw
+    $page = $page.Replace(
+        '<link rel="stylesheet" href="resource://wolfpack/wolfpack.css" />',
+        "<style type=`"text/css`"><![CDATA[`n$css`n]]></style>"
+    )
+    $scriptTag = '<script type="application/javascript" src="resource://wolfpack/wolfpack.js" />'
+    $page = $page.Replace(
+        $scriptTag,
+        "<script type=`"application/javascript`"><![CDATA[`n$pageScript`n]]></script>"
+    )
+    Set-Content -LiteralPath $pagePath -Value $page -Encoding UTF8 -NoNewline
+
+    # Remove any previous autoconfig registration when rebuilding an extracted
+    # directory in place.
+    $cfgPath = Join-Path $appDir "librewolf.cfg"
+    if (-not (Test-Path -LiteralPath $cfgPath)) {
+        throw "LibreWolf configuration not found: $cfgPath"
+    }
+    $cfg = Get-Content -LiteralPath $cfgPath -Raw
+    $startMarker = "// WolfPack about: page shim START"
+    $endMarker = "// WolfPack about: page shim END"
+    $startIndex = $cfg.IndexOf($startMarker, [StringComparison]::Ordinal)
+    if ($startIndex -ge 0) {
+        $endIndex = $cfg.IndexOf($endMarker, $startIndex, [StringComparison]::Ordinal)
+        if ($endIndex -ge 0) {
+            $endIndex += $endMarker.Length
+            $cfg = $cfg.Remove($startIndex, $endIndex - $startIndex)
+        }
+    }
+
+    if ($startIndex -ge 0) {
+        Set-Content -LiteralPath $cfgPath -Value ($cfg.TrimEnd() + "`n") -Encoding UTF8 -NoNewline
+    }
+
+    $autoconfigSource = Join-Path $shimSource "wolfpack-autoconfig.js"
+    if (-not (Test-Path -LiteralPath $autoconfigSource)) {
+        throw "WolfPack about page autoconfig source not found: $autoconfigSource"
+    }
+    $autoconfig = Get-Content -LiteralPath $autoconfigSource -Raw
+    $cfg = Get-Content -LiteralPath $cfgPath -Raw
+    $cfg = $cfg.TrimEnd() + "`n`n// WolfPack about: page shim START`n" + $autoconfig.Trim() + "`n// WolfPack about: page shim END`n"
+    Set-Content -LiteralPath $cfgPath -Value $cfg -Encoding UTF8 -NoNewline
+
+    Write-Success "  about:wolfpack reset/firewall page installed in browser/wolfpack/"
+}
+
 function Inject-Config($lwRoot) {
     Write-Status "Injecting custom configuration..."
 
@@ -347,6 +438,9 @@ function Inject-Config($lwRoot) {
 
     # 1. Patch librewolf.cfg to fix common issues BEFORE injecting our config
     Patch-LibreWolfCfg $appDir
+
+    # 1b. Register the privileged about:wolfpack settings page.
+    Install-WolfPackBrowserShim $appDir
 
     $localeRegion = Get-LocaleRegion $Locale
     $searchEngine = Get-SearchEngineForRegion $localeRegion

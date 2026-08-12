@@ -8,6 +8,7 @@
 - Added Windows SDK-backed MSIX packaging alongside the NSIS installer.
 - Added locale-aware search defaults, preserved user overrides, toolbar pinning, and the `--profile-override` launcher option.
 - Added validated `wolfpack.cfg` and packaged GPO/ADMX templates for managed Firefox policy deployment.
+- Added the privileged `about:wolfpack` settings page with profile reset backups, LibreWolf's opt-in extension firewall, and bundled-extension availability controls.
 
 ## v1.4.0 (2026-03-15)
 

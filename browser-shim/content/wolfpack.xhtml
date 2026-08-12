@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>WolfPack Settings</title>
+    <link rel="stylesheet" href="resource://wolfpack/wolfpack.css" />
+  </head>
+  <body>
+    <main>
+      <header class="hero">
+        <p class="eyebrow">WolfPack</p>
+        <h1>Browser settings</h1>
+        <p class="lede">Manage the profile defaults and the optional LibreWolf extension firewall.</p>
+      </header>
+
+      <section class="card" aria-labelledby="reset-heading">
+        <div class="card-heading">
+          <div>
+            <p class="eyebrow">Profile</p>
+            <h2 id="reset-heading">Reset to WolfPack defaults</h2>
+          </div>
+          <span class="badge">Preserves browsing data</span>
+        </div>
+        <p>Restores managed preferences and removes the separate user override file. Bookmarks, history, cookies, saved logins, and downloaded files remain in place. A backup is saved before anything changes.</p>
+        <button id="reset-button" type="button" class="primary">Reset settings and restart</button>
+        <p id="reset-status" class="status" role="status" aria-live="polite" />
+      </section>
+
+      <section class="card" aria-labelledby="firewall-heading">
+        <div class="card-heading">
+          <div>
+            <p class="eyebrow">Network controls</p>
+            <h2 id="firewall-heading">Extension firewall</h2>
+          </div>
+          <span id="firewall-state" class="badge">Loading</span>
+        </div>
+        <p>LibreWolf implements this firewall as a global content-security policy for extension pages. It blocks extension network access when enabled; extensions that need live filter lists or remote data may stop working.</p>
+        <label class="toggle-row" for="firewall-toggle">
+          <input id="firewall-toggle" type="checkbox" />
+          <span>
+            <strong>Block network access for extension pages</strong>
+            <small>Applies to all installed extensions after they reload.</small>
+          </span>
+        </label>
+        <button id="firewall-apply" type="button" class="secondary">Apply firewall setting</button>
+        <p id="firewall-status" class="status" role="status" aria-live="polite" />
+
+        <h3>Bundled extensions</h3>
+        <p class="muted">These controls enable or disable each bundled extension. The firewall switch above remains global because that is the scope exposed by LibreWolf.</p>
+        <div id="extension-list" class="extension-list" />
+      </section>
+
+      <footer>
+        <span>WolfPack portable profile controls</span>
+        <span><a href="about:preferences#privacy">Open browser privacy settings</a></span>
+      </footer>
+    </main>
+    <script type="application/javascript" src="resource://wolfpack/wolfpack.js" />
+  </body>
+</html>

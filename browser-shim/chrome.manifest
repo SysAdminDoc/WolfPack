@@ -1,0 +1,2 @@
+resource wolfpack browser/wolfpack/
+content wolfpack browser/wolfpack/ contentaccessible=yes
